@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Scene Scope="Project" version="2">
+    <Scope Scope="Faces Configuration Only"/>
+    <Scope Scope="Project">
+        <Node id="signup.xhtml" x="150" y="300" zoom="true"/>
+        <Node id="admin/admin.xhtml" x="900" y="150" zoom="true"/>
+        <Node id="admin/prevorders.xhtml" x="403" y="450" zoom="true"/>
+        <Node id="login.xhtml" x="1150" y="150" zoom="true"/>
+        <Node id="index.xhtml" x="159" y="448" zoom="true"/>
+        <Node id="customer/customer.xhtml" x="650" y="300" zoom="true"/>
+        <Node id="logout.xhtml" x="150" y="600" zoom="true"/>
+        <Node id="loginError.xhtml" x="650" y="150" zoom="true"/>
+        <Node id="admin/userinfo.xhtml" x="400" y="150" zoom="true"/>
+        <Node id="prevorders.xhtml" x="150" y="150" zoom="true"/>
+        <Node id="403.xhtml" x="400" y="300" zoom="true"/>
+    </Scope>
+    <Scope Scope="All Faces Configurations"/>
+</Scene>

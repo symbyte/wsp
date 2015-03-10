@@ -1,0 +1,140 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : Feb 4, 2015, 2:10:27 PM
+    Author     : Steve
+*/
+*:focus
+{
+	outline:none;
+}
+html
+{
+	position:relative;
+	min-height: 100%;
+}
+body
+{
+	margin: 0 0 40px;
+}
+.tableTitle
+{
+	font-size: 22px;
+	border: 1px #cecece solid;
+	border-radius: 5px;
+	color: lightslategray;
+	background-color: whitesmoke;
+}
+.evenrows
+{
+	background-color:#dedede;
+}
+.oddrows
+{
+	background-color: whitesmoke; 
+}
+.center
+{
+	text-align: center;
+	vertical-align: top;
+	margin-left: auto;
+	margin-right:  auto;
+
+}
+.headerFormat
+{
+	background-color:    whitesmoke;
+	color: lightslategrey;
+
+}
+#mainHeader
+{
+	margin-bottom: 30px;
+}
+.foot
+{
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	height: 40px;
+	width: 100%;
+	margin-top:20px; 
+}
+div#nostuff 
+{
+	color: #e26a68;
+}
+.eleBorder
+{
+	border: 1px solid #cecece;
+	border-radius: 5px;
+}
+.columnTitles
+{
+	padding-left: 12px;
+	padding-right: 12px;
+}
+.editColumn
+{
+	width: 40px;
+}
+.title{
+	width: 260px;
+}
+.author
+{
+	width: 110px;
+}
+.unitPrice
+{
+	width: 100px;
+}
+.quantity
+{
+	width: 86px;
+}
+.buttonCol
+{
+	width:103px;
+}
+.evenrows :not(input):hover
+{
+	background-color: #ededed;
+}
+.oddrows :not(input):hover
+{
+	background-color: #ededed;
+}
+.signIn
+{
+	margin: 0 auto; 
+	padding: 12px;
+	background-color: whitesmoke;
+}
+.pull-right
+{
+	float: right !important;
+}
+.pageClass .ui-datatable thead th, .ui-datatable tbody td, .ui-datatable tfoot td
+{
+	padding: 4px 10px !important;
+	overflow: hidden ;
+	/* border-width: 1px; */
+	border-style: none !important;
+}
+.pageClass .ui-datatable-odd
+{
+	background-color: #ffffff !important;
+}
+.pageClass .ui-widget-content
+{
+	border: none !important;
+}
+.pageClass .ui-widget-header
+{
+	border:none !important;
+	background-color:#ffffff !important;
+}

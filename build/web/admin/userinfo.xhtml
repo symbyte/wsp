@@ -1,0 +1,154 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:b="http://bootsfaces.net/ui"
+      xmlns:p="http://primefaces.org/ui">
+	<h:head>
+		<title>Sign Up Info</title>
+		<h:outputStylesheet library="css" name="maincss.css"/>
+	</h:head>
+	<h:body>
+		<b:navBar brand="My Store Of Awesome" brandHref="/termProject/faces/index.xhtml" fixed="yes">
+			<b:navbarLinks pull="right">
+				<b:navLink value="Manage Products" outcome="admin"/>
+				<b:navLink value="Logout" outcome="/logout" rendered="#{userBean.isLoggedIn()}"/>
+			</b:navbarLinks>	
+		</b:navBar>
+		<b:container>
+			<b:row>
+				<b:column span="12" offset="0" >
+					<h:form id="userList">
+						<p:dataTable paginator="true" rows="5" paginatorPosition="bottom" 
+							     paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} 
+							     {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"  
+							     value="#{userBean.users}" var="user"
+							     > 
+							<f:facet name="caption">User List</f:facet>	
+							<p:column width="5%">
+								<f:facet name="header">Edit</f:facet>
+								<h:selectBooleanCheckbox value ="#{user.editable}" onclick="submit()"/>
+							</p:column>
+							<p:column>
+								<f:facet name="header">Username</f:facet>
+								<h:outputText value="#{user.username}" rendered="#{ not user.editable}"/>
+								<b:inputText value ="#{user.username}" rendered="#{user.editable}"/>
+							</p:column>
+							<p:column>
+								<f:facet name="header">Password</f:facet>
+								<h:outputText value="********" rendered="#{ not user.editable}"/>
+								<b:inputSecret value ="#{user.password}" rendered="#{user.editable}"/>
+							</p:column>
+							<p:column>
+								<f:facet name="header">First Name</f:facet>
+								<h:outputText value="#{user.firstname}" rendered="#{ not user.editable}"/>
+								<b:inputText value ="#{user.firstname}" rendered="#{user.editable}"/>
+							</p:column>
+							<p:column>
+								<f:facet name="header">Last Name</f:facet>
+								<h:outputText value="#{user.lastname}" rendered="#{ not user.editable}"/>
+								<b:inputText value ="#{user.lastname}" rendered="#{user.editable}"/>
+							</p:column>
+							<p:column>
+								<f:facet name="header">Phone Number</f:facet>
+								<h:outputText value="#{user.phonenum}" rendered="#{ not user.editable}"/>
+								<b:inputText value ="#{user.phonenum}" rendered="#{user.editable}"/>
+							</p:column>
+							<p:column>
+								<f:facet name="header">Email Address</f:facet>
+								<h:outputText value="#{user.email}" rendered="#{ not user.editable}"/>
+								<b:inputText value ="#{user.email}" rendered="#{user.editable}"/>
+							</p:column>
+							<p:column>
+								<f:facet name="header">Address</f:facet>
+								<h:outputText value="#{user.address}" rendered="#{ not user.editable}"/>
+								<b:inputText value ="#{user.address}" rendered="#{user.editable}"/>
+							</p:column>
+							<p:column width="12%">
+								<b:commandButton value="order history" ajax="true" update='orderModal'
+										 rendered="#{not user.editable}"
+										 oncomplete="$('#orderModal').modal('show');"
+										 action="#{storeBean.viewUserInfo(user.username)}"/>
+								<b:selectBooleanCheckbox value="#{user.admin}" caption="Admin" 
+											 rendered="#{user.editable}"/>
+								<b:selectBooleanCheckbox value="#{user.cust}" caption="Cust" 
+											 rendered="#{user.editable}"/>
+							</p:column>
+							<f:facet name="footer">
+								<b:row>
+									<b:column span="2" rendered="#{not userBean.anyEditableUsers()}">
+										<b:commandButton id='addBtn' 
+												 value ="Add User" ajax="true" update='addBtn editBtnGrp userList'
+												 oncomplete="$('.ui-paginator-last').trigger('click');"
+												 action="#{userBean.addUser()}"
+												 rendered ="#{not userBean.anyEditableUsers()}"
+												 >
+											<f:ajax render="userList"/>
+										</b:commandButton>
+									</b:column>
+									<b:column id='editBtnGrp' span="4" rendered="#{userBean.anyEditableUsers()}">
+										<b:buttonGroup>
+											<b:commandButton 
+												value ="Save"
+												action="#{userBean.updateUserDB()}"
+												>
+												<f:ajax render="userList" execute="@form"/>
+											</b:commandButton>
+											<b:commandButton 
+												value ="Delete Checked Users"
+												action="#{userBean.deleteUsers()}"
+												>
+												<f:ajax render="userList" execute="@form"/>
+											</b:commandButton>
+										</b:buttonGroup>
+									</b:column>
+								</b:row>
+							</f:facet>
+						</p:dataTable>
+
+					</h:form>
+				</b:column>
+			</b:row>
+		</b:container>
+	</h:body>
+	<b:modal id="orderModal" title="Previous orders for #{storeBean.watchedUser}">
+		<h:form>
+			<ui:repeat value="#{storeBean.getOrders(storeBean.watchedUser)}" var="order">
+				<h:dataTable class="center eleBorder" rowClasses="evenrows,oddrows"
+					     captionClass="tableTitle" headerClass="columnTitles" 
+					     columnClasses="title, author, price, quantity"
+					     value="#{order.books}" var="book">
+					<f:facet name="caption">Order # #{order.id}</f:facet>
+					<h:column>
+						<f:facet name="header">Title</f:facet>
+							#{book.title}
+					</h:column>
+					<h:column>
+						<f:facet name="header">Author</f:facet>
+							#{book.author}
+					</h:column>
+					<h:column>
+						<f:facet name="header">Unit Price</f:facet>
+						<h:outputText value="#{book.price}">
+							<f:convertNumber type="currency" currencySymbol="$"/>
+						</h:outputText>
+					</h:column>
+					<h:column>
+						<f:facet name="header">Quantity</f:facet>
+							#{book.quantity}
+					</h:column>
+					<f:facet name="footer" >
+						<h:outputText value ="#{order.total}" style ="float:right">
+							<f:convertNumber type="currency" currencySymbol="$"/>
+						</h:outputText>
+						<h:outputText style="float:right; font-weight: bold" value="Total:&nbsp;"/>
+					</f:facet>
+				</h:dataTable>
+				<br/>
+			</ui:repeat>
+		</h:form>
+	</b:modal>
+</html>
+

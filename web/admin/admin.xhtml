@@ -1,0 +1,111 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:b="http://bootsfaces.net/ui"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <h:head>
+	<title>Program 6</title>
+	<h:outputStylesheet library="css" name="maincss.css"/>
+    </h:head>
+    <h:body>
+	<b:navBar brand="My Store Of Awesome" brandHref="#" fixed="yes">
+	    <b:navbarLinks pull="right">
+		<b:navLink value="Shop" outcome="/customer/customer" rendered="#{userBean.customer}" />
+		<b:navLink value="Manage Users" outcome="userinfo"/>
+		<b:navLink value="Logout" outcome="/logout" rendered="#{userBean.isLoggedIn()}"/>
+	    </b:navbarLinks>	
+	</b:navBar>
+	<br/>
+	<br/>
+	<h:form id="bookList">
+	    <b:container>
+		<b:row>
+		    <b:column span="8" offset="2">
+
+			<p:dataTable  paginator="true" rows="5" paginatorPosition="bottom" 
+				      paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} 
+				      {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}" 
+				      value="#{storeBean.bookList}" 
+				      var="item">
+			    <f:facet name="caption">Available Books</f:facet>
+			    <p:column width="5%">
+				<f:facet name="header">Edit</f:facet>
+				<h:selectBooleanCheckbox value ="#{item.editable}" onclick="submit()"/>
+			    </p:column>
+			    <p:column width="20%">
+				<f:facet name="header">Image</f:facet>
+			    </p:column>
+			    <p:column>
+				<f:facet name="header">Title</f:facet>
+				<h:outputText value="#{item.title}" rendered="#{not item.editable}"/>
+				<b:inputText  value="#{item.title}" rendered="#{item.editable}"/>
+			    </p:column> 
+			    <p:column>
+				<f:facet name="header">Author</f:facet>
+				<h:outputText value="#{item.author}" rendered="#{not item.editable}"/>
+				<b:inputText class="tableInput" value="#{item.author}" rendered="#{item.editable}"/>
+			    </p:column>
+			    <p:column>
+				<f:facet name="header">Price</f:facet>
+				<h:outputText value="#{item.price}" rendered="#{not item.editable}">
+				    <f:convertNumber type="currency" currencySymbol="$" />
+				</h:outputText>
+				<b:inputText value="#{item.price}" size="6" rendered="#{item.editable}"/>
+			    </p:column>
+			    <p:column>
+				<f:facet name="header">Pages</f:facet>
+			    </p:column>
+			    <p:column>
+				<f:facet name="header">Quantity</f:facet>
+			    </p:column>
+			    <p:column>
+				<f:facet name="header">Product #</f:facet>
+				<h:outputText value="#{item.isbn}" rendered="#{not item.editable}"/>
+				<b:inputText value="#{item.isbn}" size ="5" rendered="#{item.editable}"  disabled="#{item.isbn != 0}"/>
+			    </p:column>
+			    <f:facet name="footer">
+				<b:row>
+				    <b:column span="2" rendered="#{not storeBean.anyEditableBooks()}">
+					<b:commandButton id='addBtn' 
+						value ="Add Book" ajax="true" update='addBtn editBtnGrp bookList'
+						oncomplete="$('.ui-paginator-last').trigger('click');"
+						action="#{storeBean.addBook()}"
+						rendered ="#{not storeBean.anyEditableBooks()}"
+						>
+					    <f:ajax render="bookList"/>
+					</b:commandButton>
+				    </b:column>
+				    <b:column id='editBtnGrp' span="4" rendered="#{storeBean.anyEditableBooks()}">
+					<b:buttonGroup>
+					    <b:commandButton 
+						    value ="Save"
+						    action="#{storeBean.updateBookDB()}"
+						    >
+						<f:ajax render="bookList" execute="@form"/>
+					    </b:commandButton>
+					    <b:commandButton 
+						    value ="Delete Checked Books"
+						    action="#{storeBean.deleteBooks()}"
+						    >
+						<f:ajax render="bookList" execute="@form"/>
+					    </b:commandButton>
+					</b:buttonGroup>
+				    </b:column>
+				</b:row>
+			    </f:facet>
+			</p:dataTable>
+
+		    </b:column>
+		</b:row>
+	    </b:container>
+	</h:form>
+	<div id="footer" class="headerFormat foot eleBorder center">
+	    &copy;2015 FourBooksAndAWarmCup
+	</div>
+    </h:body>
+
+</html>
+
