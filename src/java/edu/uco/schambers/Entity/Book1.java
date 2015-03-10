@@ -26,12 +26,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @DiscriminatorValue("B")
 @Table(name = "BOOK")
 @XmlRootElement
-@NamedQueries({
-	@NamedQuery(name = "Book.findAll", query = "SELECT b FROM Book b"),
-	@NamedQuery(name = "Book.findByProdid", query = "SELECT b FROM Book b WHERE b.prodid = :prodid"),
-	@NamedQuery(name = "Book.findByPages", query = "SELECT b FROM Book b WHERE b.pages = :pages"),
-	@NamedQuery(name = "Book.findByAuthor", query = "SELECT b FROM Book b WHERE b.author = :author")})
-public class Book extends Product implements Serializable {
+public class Book1 extends Product implements Serializable {
 	private static final long serialVersionUID = 1L;
 	@Column(name = "PAGES")
 	private Integer pages;
@@ -39,10 +34,10 @@ public class Book extends Product implements Serializable {
         @Column(name = "AUTHOR")
 	private String author;
 
-	public Book() {
+	public Book1() {
 	}
 
-	public Book(Integer prodid) {
+	public Book1(Integer prodid) {
 		super(prodid);
 	}
 

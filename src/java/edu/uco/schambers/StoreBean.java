@@ -6,6 +6,7 @@ package edu.uco.schambers;
  * and open the template in the editor.
  */
 
+import edu.uco.schambers.ejb.BookFacade;
 import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -18,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
@@ -35,6 +37,8 @@ public class StoreBean implements Serializable {
 	List<Book> bookList;
 	List<Order> orderList;
 	String watchedUser;
+	//@EJB
+	//BookFacade bookFacade;
 
 	public String getWatchedUser() {
 		return watchedUser;
@@ -103,8 +107,12 @@ public class StoreBean implements Serializable {
 	@PostConstruct
 	void init() {
 		try {
-			getBookListFromDB();
-			getOrdersFromDB();
+			//getBookListFromDB();
+			//getOrdersFromDB();
+			//Book1 b = new Book1(9183);
+			//b.setAuthor("the boss");
+			//bookFacade.create(b);
+			
 		} catch (SQLException e) {
 			throw new IllegalStateException("Something went wrong with DB.");
 		}
