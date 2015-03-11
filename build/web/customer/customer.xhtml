@@ -59,28 +59,112 @@
 				    </p:column>
 				    <p:column>
 					<f:facet name="header">Pages</f:facet>
-					#{item.pages}
+					    #{item.pages}
 				    </p:column>
 				    <p:column>
 					<f:facet name="header">Quantity</f:facet>
-					#{item.quantity}
+					    #{item.quantity}
 				    </p:column>
 				    <p:column>
 					<f:facet name="header">Product #</f:facet>
-					#{item.prodid}
+					    #{item.prodid}
 				    </p:column>
 				    <p:column>
 					<b:commandButton ajax ="true" update="cartContents total" 
-						value="Add to cart" 
-						action="#{storeBean.addItem(item)}"
-						onclick="this.blur()">
+							 value="Add to cart" 
+							 action="#{storeBean.addItem(item)}"
+							 onclick="this.blur()">
 					</b:commandButton>	
 				    </p:column>
 				</p:dataTable>
 			    </b:tab>
 			    <b:tab title="Shark Repellent">
+				<p:dataTable  paginator="true" rows="5" paginatorPosition="bottom" tableStyle="width:auto"
+					      paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} 
+					      {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}" 
+					      value="#{storeBean.sharkList}" 
+					      var="item">
+				    <p:column>
+					<f:facet name="header">Image</f:facet>
+				    </p:column>
+				    <p:column>
+					<f:facet name="header">Brand</f:facet>
+					    #{item.prodname}
+				    </p:column> 
+				    <p:column>
+					<f:facet name="header">Effectiveness</f:facet>
+					    #{item.effectiveness}
+				    </p:column>
+				    <p:column>
+					<f:facet name="header">Price</f:facet>
+					<h:outputText value="#{item.prodprice}">
+					    <f:convertNumber type="currency" currencySymbol="$" />
+					</h:outputText>
+				    </p:column>
+				    <p:column>
+					<f:facet name="header">Volume</f:facet>
+					#{item.volume}oz.
+				    </p:column>
+				    <p:column>
+					<f:facet name="header">Quantity In Stock</f:facet>
+					    #{item.quantity}
+				    </p:column>
+				    <p:column>
+					<f:facet name="header">Product #</f:facet>
+					    #{item.prodid}
+				    </p:column>
+				    <p:column>
+					<b:commandButton ajax ="true" update="cartContents total" 
+							 value="Add to cart" 
+							 action="#{storeBean.addItem(item)}"
+							 onclick="this.blur()">
+					</b:commandButton>	
+				    </p:column>
+				</p:dataTable>
 			    </b:tab>
 			    <b:tab title="Jetpacks">
+				<p:dataTable  paginator="true" rows="5" paginatorPosition="bottom" tableStyle="width:auto"
+					      paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} 
+					      {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}" 
+					      value="#{storeBean.jetpackList}" 
+					      var="item">
+				    <p:column>
+					<f:facet name="header">Image</f:facet>
+				    </p:column>
+				    <p:column>
+					<f:facet name="header">Brand</f:facet>
+					    #{item.prodname}
+				    </p:column> 
+				    <p:column>
+					<f:facet name="header">Fuel type</f:facet>
+					    #{item.fuel}
+				    </p:column>
+				    <p:column>
+					<f:facet name="header">Price</f:facet>
+					<h:outputText value="#{item.prodprice}">
+					    <f:convertNumber type="currency" currencySymbol="$" />
+					</h:outputText>
+				    </p:column>
+				    <p:column>
+					<f:facet name="header">Engine Size</f:facet>
+					    #{item.enginesize}
+				    </p:column>
+				    <p:column>
+					<f:facet name="header">Quantity</f:facet>
+					    #{item.quantity}
+				    </p:column>
+				    <p:column>
+					<f:facet name="header">Product #</f:facet>
+					    #{item.prodid}
+				    </p:column>
+				    <p:column>
+					<b:commandButton ajax ="true" update="cartContents total" 
+							 value="Add to cart" 
+							 action="#{storeBean.addItem(item)}"
+							 onclick="this.blur()">
+					</b:commandButton>	
+				    </p:column>
+				</p:dataTable>
 			    </b:tab>
 			</b:tabView>
 		    </h:form>
@@ -103,23 +187,19 @@
 				>
 			    <f:facet name="caption" >Cart</f:facet>
 			    <p:column>
-				<f:facet name="header">Title</f:facet>
-				    #{item.title}
-			    </p:column>	
-			    <p:column>
-				<f:facet name="header">Author</f:facet>
-				    #{item.author}
+				<f:facet name="header">Product</f:facet>
+				    #{item.productInfo}
 			    </p:column>	
 			    <p:column>
 				<f:facet name="header">Unit Price</f:facet>
-				<h:outputText value="#{item.price}">
+				<h:outputText value="#{item.prodprice}">
 				    <f:convertNumber type="currency"
 						     currencySymbol="$"/>
 				</h:outputText>
 			    </p:column>	
 			    <p:column>
 				<f:facet name="header">Quantity</f:facet>
-				    #{item.quantity}
+				    #{item.cartCount}
 			    </p:column>	
 			    <p:column>
 				<f:facet name="header">Sub total</f:facet>
@@ -128,7 +208,7 @@
 				</h:outputText>
 			    </p:column>	
 			    <p:column>
-				    <b:commandButton value="Remove One" ajax="true"  update="cartContents total"
+				<b:commandButton value="Remove One" ajax="true"  update="cartContents total"
 						 action="#{storeBean.removeItem(item)}"
 						 >
 				</b:commandButton>
@@ -136,7 +216,7 @@
 			    <f:facet name="footer">
 				<b:row>
 				    <b:column span ="2">
-					    <b:commandButton style="float:left" ajax="true" update="cartContents total" 
+					<b:commandButton style="float:left" ajax="true" update="cartContents total" 
 							 value="Check Out" action="#{storeBean.checkOut()}">
 					</b:commandButton>
 				    </b:column>
@@ -163,13 +243,13 @@
 	    &copy;2015 FourBooksAndAWarmCup
 	</div>
     </h:body>
-	<script type="text/javascript">
-		$(document).ready(function(){
-			$(".active").click(function(){
-				$(".active").blur();
-			});
+    <script type="text/javascript">
+	    $(document).ready(function () {
+		$(".active").click(function () {
+		    $(".active").blur();
 		});
-	</script>
+	    });
+    </script>
 
 </html>
 

@@ -61,6 +61,10 @@ public class Book extends Product implements Serializable {
 	public void setAuthor(String author) {
 		this.author = author;
 	}
+	public String getProductInfo()
+	{
+		return this.getProdname() + " by " +this.author;
+	}
 
 	
 }

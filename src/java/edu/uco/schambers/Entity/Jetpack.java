@@ -8,6 +8,7 @@ package edu.uco.schambers.Entity;
 import java.io.Serializable;
 import javax.persistence.Basic;
 import javax.persistence.Column;
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
@@ -24,6 +25,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @Entity
 @Table(name = "JETPACK")
+@DiscriminatorValue("J")
 @XmlRootElement
 @NamedQueries({
 	@NamedQuery(name = "Jetpack.findAll", query = "SELECT j FROM Jetpack j"),
@@ -63,5 +65,9 @@ public class Jetpack extends Product implements Serializable {
 		this.enginesize = enginesize;
 	}
 
+	public String getProductInfo()
+	{
+		return this.getProdname() + ", " + this.enginesize + " " +this.fuel + " engine";
+	}
 	
 }

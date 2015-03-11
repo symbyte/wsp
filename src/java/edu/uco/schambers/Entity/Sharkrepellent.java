@@ -64,5 +64,9 @@ public class Sharkrepellent extends Product implements Serializable {
 		this.effectiveness = effectiveness;
 	}
 
+	public String getProductInfo()
+	{
+		return this.getProdname() + " brand shark repellent," + this.effectiveness + " effective," + this.volume + "oz."; 
+	}
 	
 }

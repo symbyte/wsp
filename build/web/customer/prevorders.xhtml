@@ -6,81 +6,81 @@
       xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:b="http://bootsfaces.net/ui"
       xmlns:p="http://primefaces.org/ui">
-	<h:head>
-		<title>Previous Orders</title>
-		<h:outputStylesheet library="css" name="maincss.css"/>
-	</h:head>
-	<h:body>
-		<b:navBar brand="My Store Of Awesome" brandHref="/prog7/faces/customer/customer.xhtml" fixed="top">
-			<b:navbarLinks pull="right">
-				<b:dropMenu value="Sign In">
-					<b:navLink value="Shop" outcome="customer" />
-					<b:navLink value="Admin" outcome="/admin/admin" />
-				</b:dropMenu>
-				<b:navLink value="Create Account" outcome="/signup"/>
-				<b:navLink value="Logout" outcome="/logout" rendered="#{userBean.isLoggedIn()}"/>
-			</b:navbarLinks>	
-		</b:navBar>
-		<br/>
-		<br/>
-		<br/>
-		<h:form>
-			<b:container>
-				<b:row>
-					<b:column class="pageClass" span="8" offset="2">
-						
-					<p:dataTable value="#{storeBean.getOrders(null)}"  tableStyleClass="borderless" var="order" rows="5" paginator="true" lazy="true">
-						<p:column>
+    <h:head>
+	<title>Previous Orders</title>
+	<h:outputStylesheet library="css" name="maincss.css"/>
+    </h:head>
+    <h:body>
+	#{storeBean.getOrdersFromDB()}
+	<b:navBar brand="My Store Of Awesome" brandHref="/prog7/faces/customer/customer.xhtml" fixed="top">
+	    <b:navbarLinks pull="right">
+		<b:dropMenu value="Sign In">
+		    <b:navLink value="Shop" outcome="customer" />
+		    <b:navLink value="Admin" outcome="/admin/admin" />
+		</b:dropMenu>
+		<b:navLink value="Create Account" outcome="/signup"/>
+		<b:navLink value="Logout" outcome="/logout" rendered="#{userBean.isLoggedIn()}"/>
+	    </b:navbarLinks>	
+	</b:navBar>
+	<br/>
+	<br/>
+	<br/>
+	<h:form>
+	    <b:container>
+		<b:row>
+		    <b:column class="pageClass" span="8" offset="2">
+
+			<p:dataTable value="#{storeBean.getOrders(null)}"  tableStyleClass="borderless" var="order" rows="5" paginator="true" lazy="true">
+			    <p:column>
 				<h:dataTable class="center eleBorder" rowClasses="evenrows,oddrows" 
 					     captionClass="tableTitle" headerClass="columnTitles" 
 					     columnClasses="title, author, price, quantity"
-					     value="#{order.books}" var="book">
-					<f:facet name="caption">Order # #{order.id}</f:facet>
-					<h:column>
-						<f:facet name="header">Title</f:facet>
-							#{book.title}
-					</h:column>
-					<h:column>
-						<f:facet name="header">Author</f:facet>
-							#{book.author}
-					</h:column>
-					<h:column>
-						<f:facet name="header">Unit Price</f:facet>
-						<h:outputText value="#{book.price}">
-							<f:convertNumber type="currency" currencySymbol="$"/>
-						</h:outputText>
-					</h:column>
-					<h:column>
-						<f:facet name="header">Quantity</f:facet>
-							#{book.quantity}
-					</h:column>
-					<f:facet name="footer" >
-						<h:outputText value ="#{order.total}" style ="float:right">
-							<f:convertNumber type="currency" currencySymbol="$"/>
-						</h:outputText>
-						<h:outputText style="float:right; font-weight: bold" value="Total:&nbsp;"/>
-					</f:facet>
+					     value="#{order.products}" var="prod">
+				    <f:facet name="caption">Order # #{order.id}
+					<h:outputText value="#{storeBean.millisToDate(order.orderDate)}" style="float:right"/>
+						      <h:outputText style="float:right" value="Date Placed:&nbsp;"/> 
+				    </f:facet>
+				    <h:column>
+					<f:facet name="header">Product</f:facet>
+					    #{prod.getProductInfo()}
+				    </h:column>
+				    <h:column>
+					<f:facet name="header">Unit Price</f:facet>
+					<h:outputText value="#{prod.prodprice}">
+					    <f:convertNumber type="currency" currencySymbol="$"/>
+					</h:outputText>
+				    </h:column>
+				    <h:column>
+					<f:facet name="header">Quantity</f:facet>
+					    #{prod.getCartCount()}
+				    </h:column>
+				    <f:facet name="footer" >
+					<h:outputText value ="#{order.total}" style ="float:right">
+					    <f:convertNumber type="currency" currencySymbol="$"/>
+					</h:outputText>
+					<h:outputText style="float:right; font-weight: bold" value="Total:&nbsp;"/>
+				    </f:facet>
 				</h:dataTable>
 				<br/>
-						</p:column>
-					</p:dataTable>
+			    </p:column>
+			</p:dataTable>
 
-					</b:column>
-				</b:row>
-			</b:container>
-		</h:form>
-		<br/>
-		<br/>
-		<div id="footer" class="headerFormat foot eleBorder center">
-			&copy;2015 FourBooksAndAWarmCup
-		</div>
-	</h:body>
-	<script>
-		$(document).ready(function(){
-			$('tr').removeClass("ui-datatable-even ui-datatable-odd ui-widget-content");
-			$('td').removeAttr('role');
-			$('table').removeAttr('role');
-		});
-	</script>
+		    </b:column>
+		</b:row>
+	    </b:container>
+	</h:form>
+	<br/>
+	<br/>
+	<div id="footer" class="headerFormat foot eleBorder center">
+	    &copy;2015 FourBooksAndAWarmCup
+	</div>
+    </h:body>
+    <script>
+	    $(document).ready(function () {
+		$('tr').removeClass("ui-datatable-even ui-datatable-odd ui-widget-content");
+		$('td').removeAttr('role');
+		$('table').removeAttr('role');
+	    });
+    </script>
 </html>
 

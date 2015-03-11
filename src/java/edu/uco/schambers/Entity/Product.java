@@ -38,7 +38,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 	@NamedQuery(name = "Product.findByProdprice", query = "SELECT p FROM Product p WHERE p.prodprice = :prodprice"),
 	@NamedQuery(name = "Product.findByQuantity", query = "SELECT p FROM Product p WHERE p.quantity = :quantity"),
 	@NamedQuery(name = "Product.findByProdtype", query = "SELECT p FROM Product p WHERE p.prodtype = :prodtype")})
-public class Product implements Serializable {
+public abstract class Product implements Serializable {
 	private static final long serialVersionUID = 1L;
 	@Id
         @Basic(optional = false)
@@ -61,6 +61,16 @@ public class Product implements Serializable {
 	private Serializable picture;
 	@Transient
 	private boolean editable;
+	@Transient
+	private int cartCount;
+
+	public int getCartCount() {
+		return cartCount;
+	}
+
+	public void setCartCount(int cartCount) {
+		this.cartCount = cartCount;
+	}
 
 	public boolean isEditable() {
 		return editable;
@@ -150,7 +160,9 @@ public class Product implements Serializable {
 	}
 	public double calcSub()
 	{
-		return this.prodprice * this.quantity;
+		return this.prodprice * this.cartCount;
 	}
+	public abstract String getProductInfo();
+
 	
 }

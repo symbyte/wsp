@@ -40,7 +40,7 @@
 				    </p:column>
 				    <p:column>
 					<f:facet name="header">Title</f:facet>
-					    #{item.title}
+					    #{item.prodname}
 				    </p:column> 
 				    <p:column>
 					<f:facet name="header">Author</f:facet>
@@ -48,29 +48,99 @@
 				    </p:column>
 				    <p:column>
 					<f:facet name="header">Price</f:facet>
-					<h:outputText value="#{item.price}">
+					<h:outputText value="#{item.prodprice}">
 					    <f:convertNumber type="currency" currencySymbol="$" />
 					</h:outputText>
 				    </p:column>
 				    <p:column>
 					<f:facet name="header">Pages</f:facet>
+					#{item.pages}
 				    </p:column>
 				    <p:column>
 					<f:facet name="header">Quantity</f:facet>
+					#{item.quantity}
 				    </p:column>
 				    <p:column>
 					<f:facet name="header">Product #</f:facet>
+					#{item.prodid}
+				    </p:column>
+				</p:dataTable>
+			    </b:tab>
+			    <b:tab title="Jetpacks">
+				<p:dataTable id="jetpackTable" paginator="true" rows="5" paginatorPosition="bottom" 
+					     value="#{storeBean.jetpackList}" 
+					     paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} 
+					     {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+					     var="item">
+				    <p:column width="25%">
+					<f:facet name="header">Image</f:facet>
+				    </p:column>
+				    <p:column>
+					<f:facet name="header">Brand</f:facet>
+					    #{item.prodname}
+				    </p:column> 
+				    <p:column>
+					<f:facet name="header">Fuel Type</f:facet>
+					    #{item.fuel}
+				    </p:column>
+				    <p:column>
+					<f:facet name="header">Price</f:facet>
+					<h:outputText value="#{item.prodprice}">
+					    <f:convertNumber type="currency" currencySymbol="$" />
+					</h:outputText>
+				    </p:column>
+				    <p:column>
+					<f:facet name="header">Engine Size</f:facet>
+					#{item.enginesize}
+				    </p:column>
+				    <p:column>
+					<f:facet name="header">Quantity</f:facet>
+					#{item.quantity}
+				    </p:column>
+				    <p:column>
+					<f:facet name="header">Product #</f:facet>
+					#{item.prodid}
 				    </p:column>
 				</p:dataTable>
 			    </b:tab>
 			    <b:tab title="Shark Repellent">
-
-			    </b:tab>
-			    <b:tab title="Jetpacks">
-
+				<p:dataTable id="sharkTable" paginator="true" rows="5" paginatorPosition="bottom" 
+					     value="#{storeBean.sharkList}" 
+					     paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} 
+					     {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+					     var="item">
+				    <p:column width="25%">
+					<f:facet name="header">Image</f:facet>
+				    </p:column>
+				    <p:column>
+					<f:facet name="header">Brand</f:facet>
+					    #{item.prodname}
+				    </p:column> 
+				    <p:column>
+					<f:facet name="header">Effectiveness</f:facet>
+					    #{item.effectiveness}
+				    </p:column>
+				    <p:column>
+					<f:facet name="header">Price</f:facet>
+					<h:outputText value="#{item.prodprice}">
+					    <f:convertNumber type="currency" currencySymbol="$" />
+					</h:outputText>
+				    </p:column>
+				    <p:column>
+					<f:facet name="header">Volume</f:facet>
+					#{item.volume}
+				    </p:column>
+				    <p:column>
+					<f:facet name="header">Quantity</f:facet>
+					#{item.quantity}
+				    </p:column>
+				    <p:column>
+					<f:facet name="header">Product #</f:facet>
+					#{item.prodid}
+				    </p:column>
+				</p:dataTable>
 			    </b:tab>
 			</b:tabView>
-	<b:commandButton value="test" action="#{testBean.insert()}"/>
 		    </h:form>
 		</b:column>
 		<b:column span="2"/>

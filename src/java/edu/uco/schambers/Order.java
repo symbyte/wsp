@@ -20,11 +20,22 @@ public class Order {
 	private double total;
 	private String user;
 	private List<Product> products;
+	private long orderDate;
 	Order()
 	{
 		products= new ArrayList<>();
 	}
 
+	public long getOrderDate() {
+		return orderDate;
+	}
+
+	public void setOrderDate(long orderDate) {
+		this.orderDate = orderDate;
+	}
+
+	
+	
 	public String getUser() {
 		return user;
 	}

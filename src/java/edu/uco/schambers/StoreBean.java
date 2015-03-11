@@ -13,13 +13,17 @@ import edu.uco.schambers.ejb.BookFacade;
 import edu.uco.schambers.ejb.JetpackFacade;
 import edu.uco.schambers.ejb.ProductFacade;
 import edu.uco.schambers.ejb.SharkrepellentFacade;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,9 +31,13 @@ import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
+import javax.faces.application.FacesMessage;
 import javax.faces.bean.ViewScoped;
+import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
+import javax.faces.validator.ValidatorException;
 import javax.inject.Named;
+import javax.servlet.http.Part;
 import javax.sql.DataSource;
 
 @Named(value = "storeBean")
@@ -44,7 +52,6 @@ public class StoreBean implements Serializable {
 	List<Jetpack> jetpackList;
 	List<Sharkrepellent> sharkList;
 	List<Order> orderList;
-	List<Product> productList;
 	String watchedUser;
 	@EJB
 	BookFacade bookFacade;
@@ -54,6 +61,7 @@ public class StoreBean implements Serializable {
 	JetpackFacade jetpackFacade;
 	@EJB
 	ProductFacade productFacade;
+	private Part part;
 
 	public List<Jetpack> getJetpackList() {
 		return jetpackList;
@@ -79,14 +87,6 @@ public class StoreBean implements Serializable {
 		this.orderList = orderList;
 	}
 
-	public List<Product> getProductList() {
-		return productList;
-	}
-
-	public void setProductList(List<Product> productList) {
-		this.productList = productList;
-	}
-
 	public String getWatchedUser() {
 		return watchedUser;
 	}
@@ -108,7 +108,6 @@ public class StoreBean implements Serializable {
 		this.bookList = bookFacade.findAll();
 		this.jetpackList = jetpackFacade.findAll();
 		this.sharkList = sharkFacade.findAll();
-		this.productList = productFacade.findAll();
 	}
 
 	public List<Book> getBookList() {
@@ -119,20 +118,17 @@ public class StoreBean implements Serializable {
 		Book b = new Book();
 		b.setEditable(true);
 		this.bookList.add(b);
-		this.productList.add(b);
 	}
 
 	public void addShark() {
 		Sharkrepellent s = new Sharkrepellent();
 		s.setEditable(true);
 		this.sharkList.add(s);
-		this.productList.add(s);
 	}
 
 	public void addJetpack() {
 		Jetpack j = new Jetpack();
 		j.setEditable(true);
-		this.jetpackList.add(j);
 		this.jetpackList.add(j);
 	}
 
@@ -146,7 +142,14 @@ public class StoreBean implements Serializable {
 
 	@PostConstruct
 	void init() {
+
 		getProductListFromDB();
+		try {
+
+			getOrdersFromDB();
+		} catch (SQLException e) {
+			throw new IllegalArgumentException("Something went wrong with fetching the orders");
+		}
 		cart = new ArrayList<Product>();
 	}
 
@@ -154,21 +157,21 @@ public class StoreBean implements Serializable {
 		boolean found = false;
 		for (Product cartStuff : cart) {
 			if (item.getProdid() == cartStuff.getProdid()) {
-				cartStuff.setQuantity(cartStuff.getQuantity() + 1);
+				cartStuff.setCartCount(cartStuff.getCartCount() + 1);
 				found = true;
 			}
 		}
 		if (!found) {
 			cart.add(item);
-			item.setQuantity(1);
+			item.setCartCount(1);
 		}
 	}
 
 	public void removeItem(Product item) {
 		if (cart.contains(item)) {
-			item.setQuantity(item.getQuantity() - 1);
+			item.setCartCount(item.getCartCount() - 1);
 		}
-		if (item.getQuantity() < 1) {
+		if (item.getCartCount() < 1) {
 			cart.remove(item);
 		}
 	}
@@ -192,10 +195,11 @@ public class StoreBean implements Serializable {
 		try {
 			String currUser = FacesContext.getCurrentInstance().getExternalContext().getUserPrincipal().getName();
 			PreparedStatement statement = conn.prepareStatement(
-				"insert into orderlist (total, username) values (?,?)", Statement.RETURN_GENERATED_KEYS
+				"insert into orderlist (total, username,orderdate) values (?,?,?)", Statement.RETURN_GENERATED_KEYS
 			);
 			statement.setDouble(1, cartTotal);
 			statement.setString(2, currUser);
+			statement.setLong(3, System.currentTimeMillis());
 			statement.executeUpdate();
 			ResultSet results = statement.getGeneratedKeys();
 			int key = -1;
@@ -205,13 +209,13 @@ public class StoreBean implements Serializable {
 			if (key == -1) {
 				throw new SQLException("Generated key not returned.");
 			}
-			for (Product b : cart) {
+			for (Product p : cart) {
 				statement = conn.prepareStatement(
-					"insert into orders(parentorder, isbn, quantity) values(?,?,?)"
+					"insert into orders(parentorder, prodid, quantity) values(?,?,?)"
 				);
 				statement.setInt(1, key);
-				statement.setInt(2, b.getIsbn());
-				statement.setInt(3, b.getQuantity());
+				statement.setInt(2, p.getProdid());
+				statement.setInt(3, p.getCartCount());
 				statement.executeUpdate();
 			}
 			cart.clear();
@@ -253,27 +257,43 @@ public class StoreBean implements Serializable {
 				int orderKey = results.getInt("ordernumber");
 				double orderTotal = results.getDouble("total");
 				String orderUser = results.getString("username");
+				Long millisDate = results.getLong("orderdate");
 				PreparedStatement innerStatement = conn.prepareStatement(
-					"Select book.title,book.author,book.price,orders.quantity"
-					+ " from book inner join orders on orders.parentorder = ? and book.isbn = orders.isbn "
+					"Select product.prodid,product.prodtype,orders.quantity"
+					+ " from product inner join orders on orders.parentorder = ? and product.prodid = orders.prodid"
 				);
 				innerStatement.setInt(1, orderKey);
 				ResultSet innerResults = innerStatement.executeQuery();
-				List<Product> bookList = new ArrayList<>();
+				List<Product> productList = new ArrayList<>();
 				while (innerResults.next()) {
 
-					Book b = new Book(innerResults.getString("title"),
-						innerResults.getString("author"),
-						innerResults.getDouble("price"),
-						innerResults.getInt("quantity")
-					);
-					bookList.add(b);
+					int id = innerResults.getInt("prodid");
+					String prodType = innerResults.getString("prodtype");
+					int cartCount = innerResults.getInt("quantity");
+					Product p;
+					switch (prodType) {
+						case "S":
+							p = sharkFacade.find(id);
+							p.setCartCount(cartCount);
+							break;
+						case "B":
+							p = bookFacade.find(id);
+							p.setCartCount(cartCount);
+							break;
+						default:
+							p = jetpackFacade.find(id);
+							p.setCartCount(cartCount);
+							break;
+					}
+
+					productList.add(p);
 				}
 				Order o = new Order();
 				o.setId(orderKey);
 				o.setTotal(orderTotal);
 				o.setUser(orderUser);
-				o.setProducts(bookList);
+				o.setOrderDate(millisDate);
+				o.setProducts(productList);
 				orders.add(o);
 			}
 
@@ -286,54 +306,154 @@ public class StoreBean implements Serializable {
 	public void updateProductDB() {
 		for (Book b : bookList) {
 			if (b.isEditable()) {
+				b.setEditable(false);
 				if (bookFacade.find(b.getProdid()) == null) {
 					bookFacade.create(b);
 				} else {
 					bookFacade.edit(b);
 				}
-				b.setEditable(false);
 
 			}
 		}
 		for (Jetpack j : jetpackList) {
 			if (j.isEditable()) {
+				j.setEditable(false);
 				if (jetpackFacade.find(j.getProdid()) == null) {
 					jetpackFacade.create(j);
 				} else {
 					jetpackFacade.edit(j);
 				}
-				j.setEditable(false);
 			}
 		}
 		for (Sharkrepellent s : sharkList) {
 			if (s.isEditable()) {
+				s.setEditable(false);
 				if (sharkFacade.find(s.getProdid()) == null) {
 					sharkFacade.create(s);
 				} else {
 					sharkFacade.edit(s);
 				}
-				s.setEditable(false);
 			}
 		}
 
 	}
 
-	public void deleteBooks() {
-		for (Product p : productList) {
-			if (p.isEditable()) {
-				productFacade.remove(p);
+	public void deleteProducts() {
+		List<Book> booksToRemove = new ArrayList<>();
+		for (Book b : bookList) {
+			if (b.isEditable()) {
+				bookFacade.remove(b);
+				booksToRemove.add(b);
 			}
 		}
+		bookList.removeAll(booksToRemove);
+		List<Sharkrepellent> sharksToRemove = new ArrayList<>();
+		for (Sharkrepellent s : sharkList) {
+			if (s.isEditable()) {
+				sharkFacade.remove(s);
+				sharksToRemove.add(s);
+			}
+		}
+		sharkList.removeAll(sharksToRemove);
+		List<Jetpack> jetpacksToRemove = new ArrayList<>();
+		for (Jetpack j : jetpackList) {
+			if (j.isEditable()) {
+				jetpackFacade.remove(j);
+				jetpacksToRemove.add(j);
+			}
+		}
+		jetpackList.removeAll(jetpacksToRemove);
 	}
 
 	public boolean anyEditableProducts() {
 		boolean found = false;
-		for (Product p : productList) {
-			if (p.isEditable()) {
+		for (Book b : bookList) {
+			if (b.isEditable()) {
+				found = true;
+			}
+		}
+		for (Sharkrepellent s : sharkList) {
+			if (s.isEditable()) {
+				found = true;
+			}
+		}
+		for (Jetpack j : jetpackList) {
+			if (j.isEditable()) {
 				found = true;
 			}
 		}
 		return found;
+	}
+
+	public String millisToDate(long date) {
+		SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/YYYY @ hh:mm aa");
+		Date d = new Date(date);
+		return formatter.format(d);
+
+	}
+
+	public void uploadFile() throws IOException, SQLException {
+
+		FacesContext facesContext = FacesContext.getCurrentInstance();
+
+		Connection conn = ds.getConnection();
+
+		InputStream inputStream;
+		inputStream = null;
+		try {
+			inputStream = part.getInputStream();
+			PreparedStatement insertQuery = conn.prepareStatement(
+				"INSERT INTO FILESTORAGE (FILE_NAME, FILE_TYPE, FILE_SIZE, FILE_CONTENTS) "
+				+ "VALUES (?,?,?,?)");
+			insertQuery.setString(1, part.getSubmittedFileName());
+			insertQuery.setString(2, part.getContentType());
+			insertQuery.setLong(3, part.getSize());
+			insertQuery.setBinaryStream(4, inputStream);
+
+			int result = insertQuery.executeUpdate();
+			if (result == 1) {
+				facesContext.addMessage("uploadForm:upload",
+					new FacesMessage(FacesMessage.SEVERITY_INFO,
+						part.getSubmittedFileName()
+						+ ": uploaded successfuly !!", null));
+			} else {
+				// if not 1, it must be an error.
+				facesContext.addMessage("uploadForm:upload",
+					new FacesMessage(FacesMessage.SEVERITY_ERROR,
+						result + " file uploaded", null));
+			}
+		} catch (IOException e) {
+			facesContext.addMessage("uploadForm:upload",
+				new FacesMessage(FacesMessage.SEVERITY_ERROR,
+					"File upload failed !!", null));
+		} finally {
+			if (inputStream != null) {
+				inputStream.close();
+			}
+			if (conn != null) {
+				conn.close();
+			}
+		}
+	}
+
+	public void validateFile(FacesContext ctx, UIComponent comp, Object value) {
+		if (value == null) {
+			throw new ValidatorException(
+				new FacesMessage(FacesMessage.SEVERITY_ERROR,
+					"Select a file to upload", null));
+		}
+		Part file = (Part) value;
+		long size = file.getSize();
+		if (size <= 0) {
+			throw new ValidatorException(
+				new FacesMessage(FacesMessage.SEVERITY_ERROR,
+					"the file is empty", null));
+		}
+		if (size > 1024 * 1024 * 10) { // 10 MB limit
+			throw new ValidatorException(
+				new FacesMessage(FacesMessage.SEVERITY_ERROR,
+					size + "bytes: file too big (limit 10MB)", null));
+		}
 	}
 
 }

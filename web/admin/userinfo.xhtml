@@ -11,6 +11,7 @@
 		<h:outputStylesheet library="css" name="maincss.css"/>
 	</h:head>
 	<h:body>
+	    #{storeBean.getOrdersFromDB()}
 		<b:navBar brand="My Store Of Awesome" brandHref="/termProject/faces/index.xhtml" fixed="yes">
 			<b:navbarLinks pull="right">
 				<b:navLink value="Manage Products" outcome="admin"/>
@@ -116,35 +117,34 @@
 	<b:modal id="orderModal" title="Previous orders for #{storeBean.watchedUser}">
 		<h:form>
 			<ui:repeat value="#{storeBean.getOrders(storeBean.watchedUser)}" var="order">
-				<h:dataTable class="center eleBorder" rowClasses="evenrows,oddrows"
+								<h:dataTable class="center eleBorder" rowClasses="evenrows,oddrows" 
 					     captionClass="tableTitle" headerClass="columnTitles" 
 					     columnClasses="title, author, price, quantity"
-					     value="#{order.books}" var="book">
-					<f:facet name="caption">Order # #{order.id}</f:facet>
-					<h:column>
-						<f:facet name="header">Title</f:facet>
-							#{book.title}
-					</h:column>
-					<h:column>
-						<f:facet name="header">Author</f:facet>
-							#{book.author}
-					</h:column>
-					<h:column>
-						<f:facet name="header">Unit Price</f:facet>
-						<h:outputText value="#{book.price}">
-							<f:convertNumber type="currency" currencySymbol="$"/>
-						</h:outputText>
-					</h:column>
-					<h:column>
-						<f:facet name="header">Quantity</f:facet>
-							#{book.quantity}
-					</h:column>
-					<f:facet name="footer" >
-						<h:outputText value ="#{order.total}" style ="float:right">
-							<f:convertNumber type="currency" currencySymbol="$"/>
-						</h:outputText>
-						<h:outputText style="float:right; font-weight: bold" value="Total:&nbsp;"/>
-					</f:facet>
+					     value="#{order.products}" var="prod">
+				    <f:facet name="caption">Order # #{order.id}
+					<h:outputText value="#{storeBean.millisToDate(order.orderDate)}" style="float:right"/>
+						      <h:outputText style="float:right" value="Date Placed:&nbsp;"/> 
+				    </f:facet>
+				    <h:column>
+					<f:facet name="header">Product</f:facet>
+					    #{prod.getProductInfo()}
+				    </h:column>
+				    <h:column>
+					<f:facet name="header">Unit Price</f:facet>
+					<h:outputText value="#{prod.prodprice}">
+					    <f:convertNumber type="currency" currencySymbol="$"/>
+					</h:outputText>
+				    </h:column>
+				    <h:column>
+					<f:facet name="header">Quantity</f:facet>
+					    #{prod.getCartCount()}
+				    </h:column>
+				    <f:facet name="footer" >
+					<h:outputText value ="#{order.total}" style ="float:right">
+					    <f:convertNumber type="currency" currencySymbol="$"/>
+					</h:outputText>
+					<h:outputText style="float:right; font-weight: bold" value="Total:&nbsp;"/>
+				    </f:facet>
 				</h:dataTable>
 				<br/>
 			</ui:repeat>
