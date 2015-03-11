@@ -5,7 +5,7 @@
  */
 package edu.uco.schambers.ejb;
 
-import edu.uco.schambers.Entity.Book1;
+import edu.uco.schambers.Entity.Book;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -15,7 +15,7 @@ import javax.persistence.PersistenceContext;
  * @author Large
  */
 @Stateless
-public class BookFacade extends AbstractFacade<Book1> {
+public class BookFacade extends AbstractFacade<Book> {
 	@PersistenceContext(unitName = "termProjectPU")
 	private EntityManager em;
 
@@ -25,7 +25,7 @@ public class BookFacade extends AbstractFacade<Book1> {
 	}
 
 	public BookFacade() {
-		super(Book1.class);
+		super(Book.class);
 	}
 	
 }

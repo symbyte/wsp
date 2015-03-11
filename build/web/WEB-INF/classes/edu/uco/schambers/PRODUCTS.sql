@@ -3,7 +3,9 @@ prodid integer primary key,
 prodname varchar(255),
 prodprice double,
 quantity integer,
-prodtype varchar(1)
+prodtype varchar(1),
+picture blob
+
 );
 create table book(
 prodid integer primary key,

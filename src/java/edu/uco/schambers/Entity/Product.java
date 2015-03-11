@@ -13,9 +13,11 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.Lob;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -36,7 +38,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 	@NamedQuery(name = "Product.findByProdprice", query = "SELECT p FROM Product p WHERE p.prodprice = :prodprice"),
 	@NamedQuery(name = "Product.findByQuantity", query = "SELECT p FROM Product p WHERE p.quantity = :quantity"),
 	@NamedQuery(name = "Product.findByProdtype", query = "SELECT p FROM Product p WHERE p.prodtype = :prodtype")})
-public abstract class Product implements Serializable {
+public class Product implements Serializable {
 	private static final long serialVersionUID = 1L;
 	@Id
         @Basic(optional = false)
@@ -54,7 +56,19 @@ public abstract class Product implements Serializable {
 	@Size(max = 1)
         @Column(name = "PRODTYPE")
 	private String prodtype;
+	@Lob
+        @Column(name = "PICTURE")
+	private Serializable picture;
+	@Transient
+	private boolean editable;
 
+	public boolean isEditable() {
+		return editable;
+	}
+
+	public void setEditable(boolean editable) {
+		this.editable = editable;
+	}
 	public Product() {
 	}
 
@@ -102,6 +116,14 @@ public abstract class Product implements Serializable {
 		this.prodtype = prodtype;
 	}
 
+	public Serializable getPicture() {
+		return picture;
+	}
+
+	public void setPicture(Serializable picture) {
+		this.picture = picture;
+	}
+
 	@Override
 	public int hashCode() {
 		int hash = 0;
@@ -125,6 +147,10 @@ public abstract class Product implements Serializable {
 	@Override
 	public String toString() {
 		return "edu.uco.schambers.Entity.Product[ prodid=" + prodid + " ]";
+	}
+	public double calcSub()
+	{
+		return this.prodprice * this.quantity;
 	}
 	
 }

@@ -1,6 +1,7 @@
 package edu.uco.schambers;
 
 
+import edu.uco.schambers.Entity.Product;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,10 +19,10 @@ public class Order {
 	private int id;
 	private double total;
 	private String user;
-	private List<Book> books;
+	private List<Product> products;
 	Order()
 	{
-		books = new ArrayList<>();
+		products= new ArrayList<>();
 	}
 
 	public String getUser() {
@@ -49,11 +50,11 @@ public class Order {
 		this.total = total;
 	}
 
-	public List<Book> getBooks() {
-		return books;
+	public List<Product> getProducts() {
+		return products;
 	}
 
-	public void setBooks(List<Book> books) {
-		this.books = books;
+	public void setProducts(List<Product> books) {
+		this.products = books;
 	}
 }

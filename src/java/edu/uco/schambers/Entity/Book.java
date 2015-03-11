@@ -14,6 +14,7 @@ import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -26,7 +27,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @DiscriminatorValue("B")
 @Table(name = "BOOK")
 @XmlRootElement
-public class Book1 extends Product implements Serializable {
+public class Book extends Product implements Serializable {
 	private static final long serialVersionUID = 1L;
 	@Column(name = "PAGES")
 	private Integer pages;
@@ -34,10 +35,12 @@ public class Book1 extends Product implements Serializable {
         @Column(name = "AUTHOR")
 	private String author;
 
-	public Book1() {
+	
+
+	public Book() {
 	}
 
-	public Book1(Integer prodid) {
+	public Book(Integer prodid) {
 		super(prodid);
 	}
 

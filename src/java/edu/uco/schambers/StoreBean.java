@@ -5,8 +5,14 @@ package edu.uco.schambers;
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
+import edu.uco.schambers.Entity.Book;
+import edu.uco.schambers.Entity.Jetpack;
+import edu.uco.schambers.Entity.Product;
+import edu.uco.schambers.Entity.Sharkrepellent;
 import edu.uco.schambers.ejb.BookFacade;
+import edu.uco.schambers.ejb.JetpackFacade;
+import edu.uco.schambers.ejb.ProductFacade;
+import edu.uco.schambers.ejb.SharkrepellentFacade;
 import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -32,13 +38,54 @@ public class StoreBean implements Serializable {
 
 	@Resource(name = "jdbc/prog7")
 	DataSource db;
-	List<Book> cart;
+	List<Product> cart;
 	double cartTotal;
 	List<Book> bookList;
+	List<Jetpack> jetpackList;
+	List<Sharkrepellent> sharkList;
 	List<Order> orderList;
+	List<Product> productList;
 	String watchedUser;
-	//@EJB
-	//BookFacade bookFacade;
+	@EJB
+	BookFacade bookFacade;
+	@EJB
+	SharkrepellentFacade sharkFacade;
+	@EJB
+	JetpackFacade jetpackFacade;
+	@EJB
+	ProductFacade productFacade;
+
+	public List<Jetpack> getJetpackList() {
+		return jetpackList;
+	}
+
+	public void setJetpackList(List<Jetpack> jetpackList) {
+		this.jetpackList = jetpackList;
+	}
+
+	public List<Sharkrepellent> getSharkList() {
+		return sharkList;
+	}
+
+	public void setSharkList(List<Sharkrepellent> sharkList) {
+		this.sharkList = sharkList;
+	}
+
+	public List<Order> getOrderList() {
+		return orderList;
+	}
+
+	public void setOrderList(List<Order> orderList) {
+		this.orderList = orderList;
+	}
+
+	public List<Product> getProductList() {
+		return productList;
+	}
+
+	public void setProductList(List<Product> productList) {
+		this.productList = productList;
+	}
 
 	public String getWatchedUser() {
 		return watchedUser;
@@ -51,39 +98,17 @@ public class StoreBean implements Serializable {
 
 	public double getCartTotal() {
 		cartTotal = 0;
-		for (Book item : cart) {
+		for (Product item : cart) {
 			cartTotal += item.calcSub();
 		}
 		return cartTotal;
 	}
 
-	public void getBookListFromDB() throws SQLException {
-		if (db == null) {
-			throw new SQLException("Database is null.");
-		}
-		Connection conn = db.getConnection();
-		if (conn == null) {
-			throw new SQLException("Connection is null.");
-		}
-		PreparedStatement statement = conn.prepareStatement(
-			"select * from book"
-		);
-		ResultSet results = statement.executeQuery();
-		List<Book> bookList = new ArrayList<>();
-		try {
-			while (results.next()) {
-				Book b = new Book();
-				b.setIsbn(results.getInt("isbn"));
-				b.setTitle(results.getString("title"));
-				b.setAuthor(results.getString("author"));
-				b.setPrice(results.getDouble("price"));
-				bookList.add(b);
-			}
-
-		} finally {
-			conn.close();
-		}
-		this.bookList = bookList;
+	public void getProductListFromDB() {
+		this.bookList = bookFacade.findAll();
+		this.jetpackList = jetpackFacade.findAll();
+		this.sharkList = sharkFacade.findAll();
+		this.productList = productFacade.findAll();
 	}
 
 	public List<Book> getBookList() {
@@ -94,36 +119,41 @@ public class StoreBean implements Serializable {
 		Book b = new Book();
 		b.setEditable(true);
 		this.bookList.add(b);
+		this.productList.add(b);
 	}
 
-	public List<Book> getCart() {
+	public void addShark() {
+		Sharkrepellent s = new Sharkrepellent();
+		s.setEditable(true);
+		this.sharkList.add(s);
+		this.productList.add(s);
+	}
+
+	public void addJetpack() {
+		Jetpack j = new Jetpack();
+		j.setEditable(true);
+		this.jetpackList.add(j);
+		this.jetpackList.add(j);
+	}
+
+	public List<Product> getCart() {
 		return cart;
 	}
 
-	public void setCart(List<Book> cart) {
+	public void setCart(List<Product> cart) {
 		this.cart = cart;
 	}
 
 	@PostConstruct
 	void init() {
-		try {
-			//getBookListFromDB();
-			//getOrdersFromDB();
-			//Book1 b = new Book1(9183);
-			//b.setAuthor("the boss");
-			//bookFacade.create(b);
-			
-		} catch (SQLException e) {
-			throw new IllegalStateException("Something went wrong with DB.");
-		}
-
-		cart = new ArrayList<Book>();
+		getProductListFromDB();
+		cart = new ArrayList<Product>();
 	}
 
-	public void addItem(Book item) {
+	public void addItem(Product item) {
 		boolean found = false;
-		for (Book cartStuff : cart) {
-			if (item.getIsbn() == cartStuff.getIsbn()) {
+		for (Product cartStuff : cart) {
+			if (item.getProdid() == cartStuff.getProdid()) {
 				cartStuff.setQuantity(cartStuff.getQuantity() + 1);
 				found = true;
 			}
@@ -134,7 +164,7 @@ public class StoreBean implements Serializable {
 		}
 	}
 
-	public void removeItem(Book item) {
+	public void removeItem(Product item) {
 		if (cart.contains(item)) {
 			item.setQuantity(item.getQuantity() - 1);
 		}
@@ -175,7 +205,7 @@ public class StoreBean implements Serializable {
 			if (key == -1) {
 				throw new SQLException("Generated key not returned.");
 			}
-			for (Book b : cart) {
+			for (Product b : cart) {
 				statement = conn.prepareStatement(
 					"insert into orders(parentorder, isbn, quantity) values(?,?,?)"
 				);
@@ -191,22 +221,20 @@ public class StoreBean implements Serializable {
 		}
 
 	}
-	public List<Order> getOrders(String user)
-	{
-		if(user.equals(""))
-		{
+
+	public List<Order> getOrders(String user) {
+		if (user.equals("")) {
 			user = FacesContext.getCurrentInstance().getExternalContext().getUserPrincipal().getName();
 		}
 		List<Order> orders = new ArrayList<>();
-		for (Order o : this.orderList)
-		{
-			if(o.getUser().equals(user))
-			{
+		for (Order o : this.orderList) {
+			if (o.getUser().equals(user)) {
 				orders.add(o);
 			}
 		}
 		return orders;
 	}
+
 	public void getOrdersFromDB() throws SQLException {
 		if (db == null) {
 			throw new SQLException("The database is null.");
@@ -231,7 +259,7 @@ public class StoreBean implements Serializable {
 				);
 				innerStatement.setInt(1, orderKey);
 				ResultSet innerResults = innerStatement.executeQuery();
-				List<Book> bookList = new ArrayList<>();
+				List<Product> bookList = new ArrayList<>();
 				while (innerResults.next()) {
 
 					Book b = new Book(innerResults.getString("title"),
@@ -245,7 +273,7 @@ public class StoreBean implements Serializable {
 				o.setId(orderKey);
 				o.setTotal(orderTotal);
 				o.setUser(orderUser);
-				o.setBooks(bookList);
+				o.setProducts(bookList);
 				orders.add(o);
 			}
 
@@ -255,96 +283,57 @@ public class StoreBean implements Serializable {
 		this.orderList = orders;
 	}
 
-	public void updateBookDB() throws SQLException {
-		if (db == null) {
-			throw new SQLException("Database is null.");
-		}
-		Connection conn = db.getConnection();
-		if (conn == null) {
-			throw new SQLException("Connection is null.");
-		}
-		PreparedStatement update = conn.prepareStatement(
-			"update book set title = ?, author = ?, price = ? where isbn = ?"
-		);
-		PreparedStatement insert = conn.prepareStatement(
-			"insert into book (title, author, price, isbn) values(?,?,?,?)"
-		);
-		PreparedStatement query = conn.prepareStatement(
-			"select Count(*)from book where isbn = ? or (title = ? and author = ? )"
-		);
-		try {
-			for (Book b : bookList) {
-				if (b.isEditable()) {
-					query.setInt(1, b.getIsbn());
-					query.setString(2,b.getTitle());
-					query.setString(3,b.getAuthor());
-					ResultSet rs = query.executeQuery();
-					int recCount = -1;
-					while (rs.next()) {
-						recCount = rs.getInt(1);
-					}
-					if (recCount == 0) {
-						insert.setString(1, b.getTitle());
-						insert.setString(2, b.getAuthor());
-						insert.setDouble(3, b.getPrice());
-						insert.setInt(4, b.getIsbn());
-						insert.execute();
-					} else if (recCount > 0) {
-
-						update.setString(1, b.getTitle());
-						update.setString(2, b.getAuthor());
-						update.setDouble(3, b.getPrice());
-						update.setInt(4, b.getIsbn());
-						update.execute();
-					}
-					b.setEditable(false);
-
-				}
-			}
-
-		} finally {
-			conn.close();
-		}
-	}
-
-	public void deleteBooks() throws SQLException {
-		if (db == null) {
-			throw new SQLException("Database is null.");
-		}
-		Connection conn = db.getConnection();
-		if (conn == null) {
-			throw new SQLException("Connection is null.");
-		}
-		PreparedStatement delete = conn.prepareStatement(
-			"delete from book where isbn = ?"
-		);
-		try {
-			List<Book> deletedBooks = new ArrayList<>();
-			for (Book b : bookList) {
-				if (b.isEditable()) {
-					delete.setInt(1, b.getIsbn());
-					delete.execute();
-					deletedBooks.add(b);
-				}
-
-			}
-			bookList.removeAll(deletedBooks);
-
-		} finally {
-			conn.close();
-		}
-
-	}
-
-	public boolean anyEditableBooks() {
-		boolean found = false;
+	public void updateProductDB() {
 		for (Book b : bookList) {
 			if (b.isEditable()) {
+				if (bookFacade.find(b.getProdid()) == null) {
+					bookFacade.create(b);
+				} else {
+					bookFacade.edit(b);
+				}
+				b.setEditable(false);
+
+			}
+		}
+		for (Jetpack j : jetpackList) {
+			if (j.isEditable()) {
+				if (jetpackFacade.find(j.getProdid()) == null) {
+					jetpackFacade.create(j);
+				} else {
+					jetpackFacade.edit(j);
+				}
+				j.setEditable(false);
+			}
+		}
+		for (Sharkrepellent s : sharkList) {
+			if (s.isEditable()) {
+				if (sharkFacade.find(s.getProdid()) == null) {
+					sharkFacade.create(s);
+				} else {
+					sharkFacade.edit(s);
+				}
+				s.setEditable(false);
+			}
+		}
+
+	}
+
+	public void deleteBooks() {
+		for (Product p : productList) {
+			if (p.isEditable()) {
+				productFacade.remove(p);
+			}
+		}
+	}
+
+	public boolean anyEditableProducts() {
+		boolean found = false;
+		for (Product p : productList) {
+			if (p.isEditable()) {
 				found = true;
 			}
 		}
 		return found;
 	}
-
 
 }

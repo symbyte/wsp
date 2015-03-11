@@ -5,7 +5,7 @@
  */
 package edu.uco.schambers;
 
-import edu.uco.schambers.Entity.Book1;
+import edu.uco.schambers.Entity.Book;
 import edu.uco.schambers.Entity.Sharkrepellent;
 import edu.uco.schambers.ejb.BookFacade;
 import edu.uco.schambers.ejb.SharkrepellentFacade;

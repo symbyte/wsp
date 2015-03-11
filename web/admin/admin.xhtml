@@ -40,8 +40,8 @@
 			    </p:column>
 			    <p:column>
 				<f:facet name="header">Title</f:facet>
-				<h:outputText value="#{item.title}" rendered="#{not item.editable}"/>
-				<b:inputText  value="#{item.title}" rendered="#{item.editable}"/>
+				<h:outputText value="#{item.prodname}" rendered="#{not item.editable}"/>
+				<b:inputText  value="#{item.prodname}" rendered="#{item.editable}"/>
 			    </p:column> 
 			    <p:column>
 				<f:facet name="header">Author</f:facet>
@@ -50,45 +50,49 @@
 			    </p:column>
 			    <p:column>
 				<f:facet name="header">Price</f:facet>
-				<h:outputText value="#{item.price}" rendered="#{not item.editable}">
+				<h:outputText value="#{item.prodprice}" rendered="#{not item.editable}">
 				    <f:convertNumber type="currency" currencySymbol="$" />
 				</h:outputText>
-				<b:inputText value="#{item.price}" size="6" rendered="#{item.editable}"/>
+				<b:inputText value="#{item.prodprice}" size="6" rendered="#{item.editable}"/>
 			    </p:column>
 			    <p:column>
 				<f:facet name="header">Pages</f:facet>
+				<h:outputText value="#{item.pages}" rendered="#{not item.editable}"/>
+				<b:inputText class="tableInput" value="#{item.pages}" rendered="#{item.editable}"/>
 			    </p:column>
 			    <p:column>
 				<f:facet name="header">Quantity</f:facet>
+				<h:outputText value="#{item.quantity}" rendered="#{not item.editable}"/>
+				<b:inputText class="tableInput" value="#{item.quantity}" rendered="#{item.editable}"/>
 			    </p:column>
 			    <p:column>
 				<f:facet name="header">Product #</f:facet>
-				<h:outputText value="#{item.isbn}" rendered="#{not item.editable}"/>
-				<b:inputText value="#{item.isbn}" size ="5" rendered="#{item.editable}"  disabled="#{item.isbn != 0}"/>
+				<h:outputText value="#{item.prodid}" rendered="#{not item.editable}"/>
+				<b:inputText value="#{item.prodid}" size ="5" rendered="#{item.editable}"  disabled="#{item.prodid != null}"/>
 			    </p:column>
 			    <f:facet name="footer">
 				<b:row>
-				    <b:column span="2" rendered="#{not storeBean.anyEditableBooks()}">
+				    <b:column span="2" rendered="#{not storeBean.anyEditableProducts()}">
 					<b:commandButton id='addBtn' 
 						value ="Add Book" ajax="true" update='addBtn editBtnGrp bookList'
 						oncomplete="$('.ui-paginator-last').trigger('click');"
 						action="#{storeBean.addBook()}"
-						rendered ="#{not storeBean.anyEditableBooks()}"
+						rendered ="#{not storeBean.anyEditableProducts()}"
 						>
 					    <f:ajax render="bookList"/>
 					</b:commandButton>
 				    </b:column>
-				    <b:column id='editBtnGrp' span="4" rendered="#{storeBean.anyEditableBooks()}">
+				    <b:column id='editBtnGrp' span="4" rendered="#{storeBean.anyEditableProducts()}">
 					<b:buttonGroup>
 					    <b:commandButton 
 						    value ="Save"
-						    action="#{storeBean.updateBookDB()}"
+						    action="#{storeBean.updateProductDB()}"
 						    >
 						<f:ajax render="bookList" execute="@form"/>
 					    </b:commandButton>
 					    <b:commandButton 
-						    value ="Delete Checked Books"
-						    action="#{storeBean.deleteBooks()}"
+						    value ="Delete Checked Products"
+						    action="#{storeBean.deleteProducts()}"
 						    >
 						<f:ajax render="bookList" execute="@form"/>
 					    </b:commandButton>
