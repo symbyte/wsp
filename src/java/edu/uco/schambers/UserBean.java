@@ -13,6 +13,8 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
+import java.util.UUID;
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.ejb.EJB;
@@ -22,6 +24,13 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.PasswordAuthentication;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 import javax.sql.DataSource;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
@@ -57,6 +66,41 @@ public class UserBean implements Serializable {
 	private String lastName;
 	@Size(min = 3, max = 50, message = "password must be between 3 and 50 digits long")
 	private String password;
+	private String emailValidationKey;
+	private String emailBeingValidated;
+	private int idOfEmailBeingValidated;
+
+	public String getEmailBeingValidated() {
+		return emailBeingValidated;
+	}
+
+	public void setEmailBeingValidated(String emailBeingValidated) {
+		this.emailBeingValidated = emailBeingValidated;
+	}
+
+	public UsersFacade getUsersFacade() {
+		return usersFacade;
+	}
+
+	public void setUsersFacade(UsersFacade usersFacade) {
+		this.usersFacade = usersFacade;
+	}
+
+	public int getIdOfEmailBeingValidated() {
+		return idOfEmailBeingValidated;
+	}
+
+	public void setIdOfEmailBeingValidated(int idOfEmailBeingValidated) {
+		this.idOfEmailBeingValidated = idOfEmailBeingValidated;
+	}
+
+	public String getEmailValidationKey() {
+		return emailValidationKey;
+	}
+
+	public void setEmailValidationKey(String emailValidationKey) {
+		this.emailValidationKey = emailValidationKey;
+	}
 
 	@PostConstruct
 	public void init() {
@@ -138,13 +182,16 @@ public class UserBean implements Serializable {
 		user.setLastname(lastName);
 		user.setFirstname(firstName);
 		user.setEmail(email);
+		emailBeingValidated = email;
 		user.setAddress(address);
 		usersFacade.create(user);
+		idOfEmailBeingValidated = usersFacade.findByUsername(username).get(0).getId();
+		sendEmailValidationLink();
 		Grouptable group = new Grouptable(username, "customergroup");
 		grouptableFacade.create(group);
 		inMemoryUsers.add(user);
 		FacesContext context = FacesContext.getCurrentInstance();
-		FacesMessage success = new FacesMessage("You have successfully signed up!");
+		FacesMessage success = new FacesMessage("You have successfully signed up! Check your email and follow the instructions.");
 		context.addMessage(null, success);
 		return "/index";
 	}
@@ -185,6 +232,16 @@ public class UserBean implements Serializable {
 				if (u.getPassword().length() < 60) {
 					u.setPassword(SHA256Encrypt.encrypt(u.getPassword()));
 				}
+				if (isChangingEmail(u)) {
+					emailBeingValidated = u.getEmail();
+					idOfEmailBeingValidated = u.getId();
+					u.setEmail(usersFacade.find(u.getId()).getEmail());
+					sendEmailValidationLink();
+					FacesContext context = FacesContext.getCurrentInstance();
+					FacesMessage validate = new FacesMessage("Due to a change in your email address, you have been sent an "
+							+ " email to validate this address. Please follow the instructions in the email!");
+					context.addMessage(null, validate);
+				}
 				if (u.getId() == null) {
 					usersFacade.create(u);
 				} else {
@@ -206,17 +263,12 @@ public class UserBean implements Serializable {
 
 					}
 				}
-				if (u.isAdmin() && !checkUserAdmin(u)) 
-				{
+				if (u.isAdmin() && !checkUserAdmin(u)) {
 					Grouptable g = new Grouptable(u.getUsername(), "admingroup");
 					grouptableFacade.create(g);
-				} 
-				else if (!u.isAdmin() && checkUserAdmin(u)) 
-				{
-					for (Grouptable g : userGroups) 
-					{
-						if (g.getGroupname().equals("admingroup")) 
-						{
+				} else if (!u.isAdmin() && checkUserAdmin(u)) {
+					for (Grouptable g : userGroups) {
+						if (g.getGroupname().equals("admingroup")) {
 							grouptableFacade.remove(g);
 						}
 
@@ -224,7 +276,9 @@ public class UserBean implements Serializable {
 				}
 			}
 		}
-
+		FacesContext context = FacesContext.getCurrentInstance();
+		FacesMessage success = new FacesMessage("User info updated.");
+		context.addMessage(null, success);
 	}
 
 	public void deleteUsers() {
@@ -270,14 +324,12 @@ public class UserBean implements Serializable {
 		}
 		return groupNames.contains("customergroup");
 	}
-	public void setCurrentUser()
-	{
-		String username= FacesContext.getCurrentInstance().getExternalContext().getUserPrincipal().getName();	
-		for(Users u : inMemoryUsers)
-		{
-			if(u.getUsername().equals(username))
-			{
-				currUser=u;
+
+	public void setCurrentUser() {
+		String username = FacesContext.getCurrentInstance().getExternalContext().getUserPrincipal().getName();
+		for (Users u : inMemoryUsers) {
+			if (u.getUsername().equals(username)) {
+				currUser = u;
 				currUser.setEditable(true);
 			}
 		}
@@ -291,18 +343,53 @@ public class UserBean implements Serializable {
 	public void setCurrUser(Users currUser) {
 		this.currUser = currUser;
 	}
-	public boolean isChangingEmail(Users u)
-	{
+
+	public boolean isChangingEmail(Users u) {
 		List<Users> userResults = usersFacade.findByUsername(u.getUsername());
-		if(userResults.isEmpty())
-		{
+		if (userResults.isEmpty()) {
 			//user not found
-		}
-		else
-		{
+		} else {
 			return !(u.getEmail().equals(userResults.get(0).getEmail()));
 		}
 		return false;
+	}
+
+	public void sendEmailValidationLink() {
+		String key= UUID.randomUUID().toString();
+		emailValidationKey = key;
+		
+		final String username = "awesomestoretest@gmail.com";
+		final String password = "t3st34man";
+
+		Properties props = new Properties();
+		props.put("mail.smtp.auth", "true");
+		props.put("mail.smtp.starttls.enable", "true");
+		props.put("mail.smtp.host", "smtp.gmail.com");
+		props.put("mail.smtp.port", "587");
+		String body = ("Please click this link to validate your email address: \n"
+				+ "http://localhost:8080/termProject/faces/validateemail.xhtml?key=" + key);
+		Session mailSession = Session.getInstance(props,
+				new javax.mail.Authenticator() {
+					protected PasswordAuthentication getPasswordAuthentication() {
+						return new PasswordAuthentication(username, password);
+					}
+				});
+		try {
+			String recip = emailBeingValidated;
+			Message message = new MimeMessage(mailSession);
+			message.setFrom(new InternetAddress("awesomestore@gmail.com"));
+			message.setRecipients(Message.RecipientType.TO,
+					InternetAddress.parse(recip));
+			message.setSubject("Email Validation");
+			message.setText(body);
+
+			Transport.send(message);
+
+			System.out.println("Done");
+
+		} catch (MessagingException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 }

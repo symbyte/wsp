@@ -23,22 +23,32 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
 import javax.faces.application.FacesMessage;
+import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.validator.ValidatorException;
 import javax.inject.Named;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.PasswordAuthentication;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 import javax.servlet.http.Part;
 import javax.sql.DataSource;
 
@@ -202,6 +212,7 @@ public class StoreBean implements Serializable {
 	}
 
 	public void checkOut() throws SQLException {
+		Long currTime = System.currentTimeMillis();
 		if (db == null) {
 			throw new SQLException("The database is null.");
 		}
@@ -212,11 +223,11 @@ public class StoreBean implements Serializable {
 		try {
 			String currUser = FacesContext.getCurrentInstance().getExternalContext().getUserPrincipal().getName();
 			PreparedStatement statement = conn.prepareStatement(
-				"insert into orderlist (total, username,orderdate) values (?,?,?)", Statement.RETURN_GENERATED_KEYS
+					"insert into orderlist (total, username,orderdate) values (?,?,?)", Statement.RETURN_GENERATED_KEYS
 			);
 			statement.setDouble(1, cartTotal);
 			statement.setString(2, currUser);
-			statement.setLong(3, System.currentTimeMillis());
+			statement.setLong(3, currTime);
 			statement.executeUpdate();
 			ResultSet results = statement.getGeneratedKeys();
 			int key = -1;
@@ -228,26 +239,26 @@ public class StoreBean implements Serializable {
 			}
 			for (Product p : cart) {
 				statement = conn.prepareStatement(
-					"insert into orders(parentorder, prodid, quantity) values(?,?,?)"
+						"insert into orders(parentorder, prodid, quantity) values(?,?,?)"
 				);
 				statement.setInt(1, key);
 				statement.setInt(2, p.getProdid());
 				statement.setInt(3, p.getCartCount());
 				statement.executeUpdate();
-				if(p instanceof Book)
-				{
-						bookFacade.edit((Book)p);
-				}
-				else if(p instanceof Sharkrepellent)
-				{
-						sharkFacade.edit((Sharkrepellent)p);
-				}
-				else if(p instanceof Jetpack)
-				{
-						jetpackFacade.edit((Jetpack)p);
+				if (p instanceof Book) {
+					bookFacade.edit((Book) p);
+				} else if (p instanceof Sharkrepellent) {
+					sharkFacade.edit((Sharkrepellent) p);
+				} else if (p instanceof Jetpack) {
+					jetpackFacade.edit((Jetpack) p);
 				}
 			}
-				
+			Order o = new Order();
+			o.setUser(currUser);
+			o.setOrderDate(currTime);
+			o.setTotal(cartTotal);
+			o.setProducts(cart);
+			sendInvoice(o);
 			cart.clear();
 
 		} finally {
@@ -280,7 +291,7 @@ public class StoreBean implements Serializable {
 		List<Order> orders = new ArrayList<>();
 		try {
 			PreparedStatement statement = conn.prepareStatement(
-				"select * from orderlist"
+					"select * from orderlist"
 			);
 			ResultSet results = statement.executeQuery();
 			while (results.next()) {
@@ -289,8 +300,8 @@ public class StoreBean implements Serializable {
 				String orderUser = results.getString("username");
 				Long millisDate = results.getLong("orderdate");
 				PreparedStatement innerStatement = conn.prepareStatement(
-					"Select product.prodid,product.prodtype,orders.quantity"
-					+ " from product inner join orders on orders.parentorder = ? and product.prodid = orders.prodid"
+						"Select product.prodid,product.prodtype,orders.quantity"
+						+ " from product inner join orders on orders.parentorder = ? and product.prodid = orders.prodid"
 				);
 				innerStatement.setInt(1, orderKey);
 				ResultSet innerResults = innerStatement.executeQuery();
@@ -433,28 +444,25 @@ public class StoreBean implements Serializable {
 		try {
 			inputStream = part.getInputStream();
 			PreparedStatement insertQuery = conn.prepareStatement(
-				"select count(*) from productImage where prodid=?");
+					"select count(*) from productImage where prodid=?");
 			insertQuery.setInt(1, id);
 			ResultSet results = insertQuery.executeQuery();
 			int count = 0;
-			if(results.next())
-			{
+			if (results.next()) {
 
 				count = results.getInt(1);
 			}
-			if (count == 0) 
-			{
+			if (count == 0) {
 				insertQuery = conn.prepareStatement("insert into productImage (prodid,file_name,file_type,file_size,file_contents)"
-					+ " values(?,?,?,?,?)");
+						+ " values(?,?,?,?,?)");
 				insertQuery.setInt(1, id);
 				insertQuery.setString(2, part.getSubmittedFileName());
 				insertQuery.setString(3, part.getContentType());
 				insertQuery.setLong(4, part.getSize());
 				insertQuery.setBinaryStream(5, inputStream);
-			} else 
-			{
+			} else {
 				insertQuery = conn.prepareStatement("update productimage set file_name=?, file_type=?,file_size=?, "
-					+ "file_contents=? where prodid=?");
+						+ "file_contents=? where prodid=?");
 				insertQuery.setString(1, part.getSubmittedFileName());
 				insertQuery.setString(2, part.getContentType());
 				insertQuery.setLong(3, part.getSize());
@@ -465,19 +473,19 @@ public class StoreBean implements Serializable {
 			int result = insertQuery.executeUpdate();
 			if (result == 1) {
 				facesContext.addMessage("uploadForm:upload",
-					new FacesMessage(FacesMessage.SEVERITY_INFO,
-						part.getSubmittedFileName()
-						+ ": uploaded successfuly !!", null));
+						new FacesMessage(FacesMessage.SEVERITY_INFO,
+								part.getSubmittedFileName()
+								+ ": uploaded successfuly !!", null));
 			} else {
 				// if not 1, it must be an error.
 				facesContext.addMessage("uploadForm:upload",
-					new FacesMessage(FacesMessage.SEVERITY_ERROR,
-						result + " file uploaded", null));
+						new FacesMessage(FacesMessage.SEVERITY_ERROR,
+								result + " file uploaded", null));
 			}
 		} catch (IOException e) {
 			facesContext.addMessage("uploadForm:upload",
-				new FacesMessage(FacesMessage.SEVERITY_ERROR,
-					"File upload failed !!", null));
+					new FacesMessage(FacesMessage.SEVERITY_ERROR,
+							"File upload failed !!", null));
 		} finally {
 			if (inputStream != null) {
 				inputStream.close();
@@ -491,20 +499,20 @@ public class StoreBean implements Serializable {
 	public void validateFile(FacesContext ctx, UIComponent comp, Object value) {
 		if (value == null) {
 			throw new ValidatorException(
-				new FacesMessage(FacesMessage.SEVERITY_ERROR,
-					"Select a file to upload", null));
+					new FacesMessage(FacesMessage.SEVERITY_ERROR,
+							"Select a file to upload", null));
 		}
 		Part file = (Part) value;
 		long size = file.getSize();
 		if (size <= 0) {
 			throw new ValidatorException(
-				new FacesMessage(FacesMessage.SEVERITY_ERROR,
-					"the file is empty", null));
+					new FacesMessage(FacesMessage.SEVERITY_ERROR,
+							"the file is empty", null));
 		}
 		if (size > 1024 * 1024 * 10) { // 10 MB limit
 			throw new ValidatorException(
-				new FacesMessage(FacesMessage.SEVERITY_ERROR,
-					size + "bytes: file too big (limit 10MB)", null));
+					new FacesMessage(FacesMessage.SEVERITY_ERROR,
+							size + "bytes: file too big (limit 10MB)", null));
 		}
 	}
 
@@ -520,6 +528,67 @@ public class StoreBean implements Serializable {
 		this.imageToChange = id;
 	}
 
+	public void sendInvoice(Order o) {
+		final String username = "awesomestoretest@gmail.com";
+		final String password = "t3st34man";
 
+		Properties props = new Properties();
+		props.put("mail.smtp.auth", "true");
+		props.put("mail.smtp.starttls.enable", "true");
+		props.put("mail.smtp.host", "smtp.gmail.com");
+		props.put("mail.smtp.port", "587");
+		String body = parseOrder(o);
+		Session mailSession = Session.getInstance(props,
+				new javax.mail.Authenticator() {
+					protected PasswordAuthentication getPasswordAuthentication() {
+						return new PasswordAuthentication(username, password);
+					}
+				});
+		try {
+			String recip = usersFacade.findByUsername(o.getUser()).get(0).getEmail();
+			Message message = new MimeMessage(mailSession);
+			message.setFrom(new InternetAddress("awesomestore@gmail.com"));
+			message.setRecipients(Message.RecipientType.TO,
+					InternetAddress.parse(recip));
+			message.setSubject("Your Recent Order");
+			message.setText(body);
+
+			Transport.send(message);
+
+			System.out.println("Done");
+
+		} catch (MessagingException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	public String parseOrder(Order o) {
+		NumberFormat formatter = NumberFormat.getCurrencyInstance();
+		StringBuilder invoiceBody = new StringBuilder();
+		invoiceBody.append("Hey ");
+		invoiceBody.append(o.getUser());
+		invoiceBody.append(",\n");
+		invoiceBody.append("Here is the invoice for you most recent order:\n\n");
+		for (Product p : o.getProducts()) {
+			invoiceBody.append("Product: ");
+			invoiceBody.append(p.getProductInfo());
+			invoiceBody.append("\n");
+			invoiceBody.append("Quantity: ");
+			invoiceBody.append(p.getCartCount());
+			invoiceBody.append("\n");
+			invoiceBody.append("Price: ");
+			invoiceBody.append(formatter.format(p.getProdprice()));
+			invoiceBody.append("\n");
+			invoiceBody.append("Subtotal: ");
+			invoiceBody.append(formatter.format(p.calcSub()));
+			invoiceBody.append("\n\n");
+		}
+		invoiceBody.append("Total: ");
+		invoiceBody.append(formatter.format(o.getTotal()));
+		invoiceBody.append("\n\n");
+		invoiceBody.append("Thank you for your order!\nThe Store of Awesome Team");
+
+		return invoiceBody.toString();
+	}
 
 }

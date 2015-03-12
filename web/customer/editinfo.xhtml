@@ -10,6 +10,7 @@
 		<h:outputStylesheet library="css" name="maincss.css"/>
 	</h:head>
 	<h:body>
+			#{userBean.init()}
 			#{userBean.setCurrentUser()}
 		<b:navBar brand="My Store Of Awesome" brandHref="#" fixed="yes">
 			<b:navbarLinks pull="right">

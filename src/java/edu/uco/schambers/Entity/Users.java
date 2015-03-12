@@ -16,6 +16,7 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -37,33 +38,36 @@ import javax.xml.bind.annotation.XmlRootElement;
 	@NamedQuery(name = "Users.findByPhonenum", query = "SELECT u FROM Users u WHERE u.phonenum = :phonenum"),
 	@NamedQuery(name = "Users.findByAddress", query = "SELECT u FROM Users u WHERE u.address = :address")})
 public class Users implements Serializable {
+
 	private static final long serialVersionUID = 1L;
 	@Id
-        @GeneratedValue(strategy = GenerationType.IDENTITY)
-        @Basic(optional = false)
-        @Column(name = "ID")
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Basic(optional = false)
+	@Column(name = "ID")
 	private Integer id;
 	@Size(max = 255)
-        @Column(name = "USERNAME")
+	@Column(name = "USERNAME")
 	private String username;
 	@Size(max = 20)
-        @Column(name = "FIRSTNAME")
+	@Column(name = "FIRSTNAME")
 	private String firstname;
 	@Size(max = 20)
-        @Column(name = "LASTNAME")
+	@Column(name = "LASTNAME")
 	private String lastname;
 	// @Pattern(regexp="[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?", message="Invalid email")//if the field contains email address consider using this annotation to enforce field validation
 	@Size(max = 50)
-        @Column(name = "EMAIL")
+	@Column(name = "EMAIL")
+	@Pattern(regexp = ".*@.*[.].*", message = "The address provided is not valid.")
 	private String email;
 	@Size(max = 64)
-        @Column(name = "PASSWORD")
+	@Column(name = "PASSWORD")
 	private String password;
 	@Size(max = 12)
-        @Column(name = "PHONENUM")
+	@Pattern(regexp = "^[1-9][0-9]{2}-[0-9]{3}-[0-9]{4}", message = "Phone number must be in format: XXX-XXX-XXXX")
+	@Column(name = "PHONENUM")
 	private String phonenum;
 	@Size(max = 255)
-        @Column(name = "ADDRESS")
+	@Column(name = "ADDRESS")
 	private String address;
 
 	@Transient
@@ -96,6 +100,7 @@ public class Users implements Serializable {
 	public void setEditable(boolean editable) {
 		this.editable = editable;
 	}
+
 	public Users() {
 	}
 
@@ -191,5 +196,5 @@ public class Users implements Serializable {
 	public String toString() {
 		return "edu.uco.schambers.Entity.Users[ id=" + id + " ]";
 	}
-	
+
 }
