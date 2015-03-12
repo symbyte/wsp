@@ -41,6 +41,7 @@ public class UserBean implements Serializable {
 	private UsersFacade usersFacade;
 	@EJB
 	private GrouptableFacade grouptableFacade;
+	private Users currUser;
 
 	List<Users> inMemoryUsers;
 
@@ -268,6 +269,40 @@ public class UserBean implements Serializable {
 			groupNames.add(gt.getGroupname());
 		}
 		return groupNames.contains("customergroup");
+	}
+	public void setCurrentUser()
+	{
+		String username= FacesContext.getCurrentInstance().getExternalContext().getUserPrincipal().getName();	
+		for(Users u : inMemoryUsers)
+		{
+			if(u.getUsername().equals(username))
+			{
+				currUser=u;
+				currUser.setEditable(true);
+			}
+		}
+
+	}
+
+	public Users getCurrUser() {
+		return currUser;
+	}
+
+	public void setCurrUser(Users currUser) {
+		this.currUser = currUser;
+	}
+	public boolean isChangingEmail(Users u)
+	{
+		List<Users> userResults = usersFacade.findByUsername(u.getUsername());
+		if(userResults.isEmpty())
+		{
+			//user not found
+		}
+		else
+		{
+			return !(u.getEmail().equals(userResults.get(0).getEmail()));
+		}
+		return false;
 	}
 
 }

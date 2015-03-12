@@ -5,7 +5,9 @@
  */
 package edu.uco.schambers.ejb;
 
+import edu.uco.schambers.Entity.Grouptable;
 import edu.uco.schambers.Entity.Users;
+import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -26,6 +28,9 @@ public class UsersFacade extends AbstractFacade<Users> {
 
 	public UsersFacade() {
 		super(Users.class);
+	}
+	public List<Users> findByUsername(String uname) {
+		return em.createNamedQuery("Users.findByUsername", Users.class).setParameter("username", uname).getResultList();
 	}
 	
 }

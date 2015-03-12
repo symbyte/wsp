@@ -1,0 +1,56 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:b="http://bootsfaces.net/ui"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+	<h:head>
+		<title>Change your account info</title>
+		<h:outputStylesheet library="css" name="maincss.css"/>
+	</h:head>
+	<h:body>
+			#{userBean.setCurrentUser()}
+		<b:navBar brand="My Store Of Awesome" brandHref="#" fixed="yes">
+			<b:navbarLinks pull="right">
+				<b:navLink value="Shop" outcome="/customer/customer" rendered="#{userBean.currUser.cust}" />
+				<b:navLink value="Previous Orders" outcome="/customer/prevorders" rendered="#{userBean.currUser.cust}"/>
+				<b:navLink value="Admin" outcome="/admin/admin" rendered="#{userBean.currUser.admin}"/>
+				<b:navLink value="Logout" outcome="/logout" rendered="#{userBean.isLoggedIn()}"/>
+			</b:navbarLinks>	
+		</b:navBar>
+		<b:container>
+			<b:row>
+
+				<b:column span="6" offset="3">
+					<h:form>
+
+						<b:panelGrid colSpans="6,6" class="eleBorder signIn">
+								<b:inputText id="username" label="Username: " value="#{userBean.currUser.username}"/>
+							<h:message for="username" errorStyle="color:red" infoStyle="color:green"/>
+							<b:inputText id="firstName" label="First Name: " value="#{userBean.currUser.firstname}"/>
+							<h:message for="firstName" errorStyle="color:red" infoStyle="color:green"/>
+							<b:inputText id="lastName" label="Last Name: " value="#{userBean.currUser.lastname}"/>
+							<h:message for="lastName" errorStyle="color:red" infoStyle="color:green"/>
+							<b:inputSecret id="password" label="Password: " value="#{userBean.currUser.password}"/>
+							<h:message for="password" errorStyle="color:red" infoStyle="color:green"/>
+							<b:inputText id="email" label="Email: " value="#{userBean.currUser.email}"/>
+							<h:message for="email" errorStyle="color:red" infoStyle="color:green"/>
+							<b:inputText id="phoneNum" label="Phone Number: " value="#{userBean.currUser.phonenum}"/>
+							<h:message for="phoneNum" errorStyle="color:red" infoStyle="color:green"/>
+							<b:inputText id="address" label="Address: " value="#{userBean.currUser.address}"/>
+							<h:message for="address" errorStyle="color:red" infoStyle="color:green"/>
+							<h:panelGroup/>
+							<b:commandButton value="Update Information"  action="#{userBean.updateUserDB()}"/>
+						</b:panelGrid>
+						<h:messages infoStyle="color:green" globalOnly="true"/>
+					</h:form>
+				</b:column>
+			</b:row>
+		</b:container>
+		<div id="footer" class="headerFormat foot eleBorder center">
+			&copy;2015 FourBooksAndAWarmCup
+		</div>
+	</h:body>
+</html>
+

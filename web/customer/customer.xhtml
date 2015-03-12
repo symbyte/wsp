@@ -9,13 +9,16 @@
 	<title></title>
 	<h:outputStylesheet library="css" name="maincss.css"/>
     </h:head>
+	#{storeBean.getProductListFromDB()}
+	#{userBean.setCurrentUser()}
     <h:body>
 	<b:navBar brand="My Store Of Awesome" brandHref="#" fixed="top">
 	    <b:navbarLinks pull="right">
 		<b:dropMenu value="Account">
-		    <b:navLink value="Edit Information" outcome="" />
+		    <b:navLink value="Edit Information" outcome="editinfo" />
 		    <b:navLink value="Previous Orders" outcome="prevorders" />
 		</b:dropMenu>
+		<b:navLink value="Admin" outcome="/admin/admin" rendered="#{userBean.currUser.admin}"/>
 		<b:navLink value="Logout" outcome="/logout" rendered="#{userBean.isLoggedIn()}"/>
 	    </b:navbarLinks>	
 	</b:navBar>
@@ -31,17 +34,18 @@
 		<b:column span="2"/>
 		<b:column span="8">
 
-		    <h:form>
 			<b:tabView>
-			    <b:tab title="Books" >
-
+			    <b:tab title="Books">
+				<h:form id="bookQty">
 				<p:dataTable  paginator="true" rows="5" paginatorPosition="bottom" tableStyle="width:auto"
 					      paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} 
 					      {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}" 
 					      value="#{storeBean.bookList}" 
 					      var="item">
-				    <p:column>
+				    <p:column width="160">
 					<f:facet name="header">Image</f:facet>
+					<image src="ImageServlet?prodid=#{item.prodid}"
+					       height="150" width="160" />
 				    </p:column>
 				    <p:column>
 					<f:facet name="header">Title</f:facet>
@@ -63,29 +67,35 @@
 				    </p:column>
 				    <p:column>
 					<f:facet name="header">Quantity</f:facet>
-					    #{item.quantity}
+					<h:outputText value="#{item.quantity}" id="bookQty"/>
 				    </p:column>
 				    <p:column>
 					<f:facet name="header">Product #</f:facet>
 					    #{item.prodid}
 				    </p:column>
 				    <p:column>
-					<b:commandButton ajax ="true" update="cartContents total" 
-							 value="Add to cart" 
+					<h:outputText value="Out of Stock!" style="color:red;" rendered="#{not item.inStock()}"/>
+					<b:commandButton ajax ="true" update="cartContents total sharkQty bookQty jetpackQty" 
+							 value="Add to cart" rendered="#{item.inStock()}" 
 							 action="#{storeBean.addItem(item)}"
 							 onclick="this.blur()">
-					</b:commandButton>	
+					</b:commandButton>
 				    </p:column>
 				</p:dataTable>
+						</h:form>
 			    </b:tab>
 			    <b:tab title="Shark Repellent">
+								<h:form id="sharkQty">
+
 				<p:dataTable  paginator="true" rows="5" paginatorPosition="bottom" tableStyle="width:auto"
 					      paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} 
 					      {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}" 
 					      value="#{storeBean.sharkList}" 
 					      var="item">
-				    <p:column>
+				    <p:column width="160">
 					<f:facet name="header">Image</f:facet>
+					<image src="ImageServlet?prodid=#{item.prodid}"
+					       height="150" width="160" />
 				    </p:column>
 				    <p:column>
 					<f:facet name="header">Brand</f:facet>
@@ -107,29 +117,35 @@
 				    </p:column>
 				    <p:column>
 					<f:facet name="header">Quantity In Stock</f:facet>
-					    #{item.quantity}
+					<h:outputText value="#{item.quantity}" id="sharkQty"/>
 				    </p:column>
 				    <p:column>
 					<f:facet name="header">Product #</f:facet>
 					    #{item.prodid}
 				    </p:column>
 				    <p:column>
-					<b:commandButton ajax ="true" update="cartContents total" 
-							 value="Add to cart" 
+					<h:outputText value="Out of Stock!" style="color:red;" rendered="#{not item.inStock()}"/>
+					<b:commandButton ajax ="true" update="cartContents total sharkQty bookQty jetpackQty" 
+							 value="Add to cart" rendered="#{item.inStock()}" 
 							 action="#{storeBean.addItem(item)}"
 							 onclick="this.blur()">
 					</b:commandButton>	
 				    </p:column>
 				</p:dataTable>
+						</h:form>
 			    </b:tab>
 			    <b:tab title="Jetpacks">
+								<h:form id="jetpackQty">
+
 				<p:dataTable  paginator="true" rows="5" paginatorPosition="bottom" tableStyle="width:auto"
 					      paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} 
 					      {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}" 
 					      value="#{storeBean.jetpackList}" 
 					      var="item">
-				    <p:column>
+				    <p:column width="160">
 					<f:facet name="header">Image</f:facet>
+					<image src="ImageServlet?prodid=#{item.prodid}"
+					       height="150" width="160" />
 				    </p:column>
 				    <p:column>
 					<f:facet name="header">Brand</f:facet>
@@ -151,23 +167,24 @@
 				    </p:column>
 				    <p:column>
 					<f:facet name="header">Quantity</f:facet>
-					    #{item.quantity}
+					<h:outputText value="#{item.quantity}"/>
 				    </p:column>
 				    <p:column>
 					<f:facet name="header">Product #</f:facet>
 					    #{item.prodid}
 				    </p:column>
 				    <p:column>
-					<b:commandButton ajax ="true" update="cartContents total" 
-							 value="Add to cart" 
+					<h:outputText value="Out of Stock!" style="color:red;" rendered="#{not item.inStock()}"/>
+					<b:commandButton ajax ="true" update="cartContents total bookQty jetpackQty sharkQty" 
+							 value="Add to cart" rendered="#{item.inStock()}" 
 							 action="#{storeBean.addItem(item)}"
 							 onclick="this.blur()">
 					</b:commandButton>	
 				    </p:column>
 				</p:dataTable>
+						</h:form>
 			    </b:tab>
 			</b:tabView>
-		    </h:form>
 		</b:column>
 		<b:column span="2"/>
 	    </b:row>
@@ -208,7 +225,7 @@
 				</h:outputText>
 			    </p:column>	
 			    <p:column>
-				<b:commandButton value="Remove One" ajax="true"  update="cartContents total"
+				<b:commandButton value="Remove One" ajax="true"  update="cartContents total sharkQty bookQty jetpackQty"
 						 action="#{storeBean.removeItem(item)}"
 						 >
 				</b:commandButton>
@@ -216,7 +233,7 @@
 			    <f:facet name="footer">
 				<b:row>
 				    <b:column span ="2">
-					<b:commandButton style="float:left" ajax="true" update="cartContents total" 
+					<b:commandButton style="float:left" ajax="true" update="cartContents total sharkQty bookQty jetpackQty" 
 							 value="Check Out" action="#{storeBean.checkOut()}">
 					</b:commandButton>
 				    </b:column>
@@ -225,7 +242,7 @@
 			</p:dataTable>
 			<div class="center" id="nostuff">
 			    <h:outputText rendered="#{storeBean.cartIsEmpty()}" 
-					  value="Your cart is empty! Culture yourself!"/>
+					  value="Your cart is empty! Prepare for the apocalypse!"/>
 			</div>
 		    </h:form>
 		</b:column>
@@ -239,16 +256,19 @@
 	    </h:outputText>
 	</div>
 	<br/>
+	<br/>
+	<br/>
+	<br/>
 	<div id="footer" class="headerFormat foot eleBorder center">
 	    &copy;2015 FourBooksAndAWarmCup
 	</div>
     </h:body>
     <script type="text/javascript">
-	    $(document).ready(function () {
-		$(".active").click(function () {
-		    $(".active").blur();
-		});
-	    });
+            $(document).ready(function () {
+                $(".active").click(function () {
+                    $(".active").blur();
+                });
+            });
     </script>
 
 </html>

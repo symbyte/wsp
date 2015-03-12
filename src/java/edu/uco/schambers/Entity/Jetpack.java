@@ -67,7 +67,7 @@ public class Jetpack extends Product implements Serializable {
 
 	public String getProductInfo()
 	{
-		return this.getProdname() + ", " + this.enginesize + " " +this.fuel + " engine";
+		return this.getProdname() + " Jetpack, " + this.enginesize + " " +this.fuel + " engine";
 	}
 	
 }

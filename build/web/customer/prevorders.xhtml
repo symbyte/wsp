@@ -14,12 +14,10 @@
 	#{storeBean.getOrdersFromDB()}
 	<b:navBar brand="My Store Of Awesome" brandHref="/prog7/faces/customer/customer.xhtml" fixed="top">
 	    <b:navbarLinks pull="right">
-		<b:dropMenu value="Sign In">
-		    <b:navLink value="Shop" outcome="customer" />
-		    <b:navLink value="Admin" outcome="/admin/admin" />
-		</b:dropMenu>
-		<b:navLink value="Create Account" outcome="/signup"/>
-		<b:navLink value="Logout" outcome="/logout" rendered="#{userBean.isLoggedIn()}"/>
+				<b:navLink value="Shop" outcome="/customer/customer" rendered="#{userBean.currUser.cust}" />
+				<b:navLink value="Edit Information" outcome="/customer/editinfo" rendered="#{userBean.currUser.cust}"/>
+				<b:navLink value="Admin" outcome="/admin/admin" rendered="#{userBean.currUser.admin}"/>
+				<b:navLink value="Logout" outcome="/logout" rendered="#{userBean.isLoggedIn()}"/>
 	    </b:navbarLinks>	
 	</b:navBar>
 	<br/>

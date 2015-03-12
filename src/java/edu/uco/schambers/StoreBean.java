@@ -9,10 +9,12 @@ import edu.uco.schambers.Entity.Book;
 import edu.uco.schambers.Entity.Jetpack;
 import edu.uco.schambers.Entity.Product;
 import edu.uco.schambers.Entity.Sharkrepellent;
+import edu.uco.schambers.Entity.Users;
 import edu.uco.schambers.ejb.BookFacade;
 import edu.uco.schambers.ejb.JetpackFacade;
 import edu.uco.schambers.ejb.ProductFacade;
 import edu.uco.schambers.ejb.SharkrepellentFacade;
+import edu.uco.schambers.ejb.UsersFacade;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
@@ -61,7 +63,19 @@ public class StoreBean implements Serializable {
 	JetpackFacade jetpackFacade;
 	@EJB
 	ProductFacade productFacade;
+	@EJB
+	UsersFacade usersFacade;
 	private Part part;
+	private int imageToChange;
+	private Users currUser;
+
+	public int getImageToChange() {
+		return imageToChange;
+	}
+
+	public void setImageToChange(int imageToChange) {
+		this.imageToChange = imageToChange;
+	}
 
 	public List<Jetpack> getJetpackList() {
 		return jetpackList;
@@ -158,18 +172,21 @@ public class StoreBean implements Serializable {
 		for (Product cartStuff : cart) {
 			if (item.getProdid() == cartStuff.getProdid()) {
 				cartStuff.setCartCount(cartStuff.getCartCount() + 1);
+				item.subtractQty();
 				found = true;
 			}
 		}
 		if (!found) {
 			cart.add(item);
 			item.setCartCount(1);
+			item.subtractQty();
 		}
 	}
 
 	public void removeItem(Product item) {
 		if (cart.contains(item)) {
 			item.setCartCount(item.getCartCount() - 1);
+			item.addQty();
 		}
 		if (item.getCartCount() < 1) {
 			cart.remove(item);
@@ -217,7 +234,20 @@ public class StoreBean implements Serializable {
 				statement.setInt(2, p.getProdid());
 				statement.setInt(3, p.getCartCount());
 				statement.executeUpdate();
+				if(p instanceof Book)
+				{
+						bookFacade.edit((Book)p);
+				}
+				else if(p instanceof Sharkrepellent)
+				{
+						sharkFacade.edit((Sharkrepellent)p);
+				}
+				else if(p instanceof Jetpack)
+				{
+						jetpackFacade.edit((Jetpack)p);
+				}
 			}
+				
 			cart.clear();
 
 		} finally {
@@ -392,23 +422,45 @@ public class StoreBean implements Serializable {
 
 	}
 
-	public void uploadFile() throws IOException, SQLException {
+	public void uploadFile(int id) throws IOException, SQLException {
 
 		FacesContext facesContext = FacesContext.getCurrentInstance();
 
-		Connection conn = ds.getConnection();
+		Connection conn = db.getConnection();
 
 		InputStream inputStream;
 		inputStream = null;
 		try {
 			inputStream = part.getInputStream();
 			PreparedStatement insertQuery = conn.prepareStatement(
-				"INSERT INTO FILESTORAGE (FILE_NAME, FILE_TYPE, FILE_SIZE, FILE_CONTENTS) "
-				+ "VALUES (?,?,?,?)");
-			insertQuery.setString(1, part.getSubmittedFileName());
-			insertQuery.setString(2, part.getContentType());
-			insertQuery.setLong(3, part.getSize());
-			insertQuery.setBinaryStream(4, inputStream);
+				"select count(*) from productImage where prodid=?");
+			insertQuery.setInt(1, id);
+			ResultSet results = insertQuery.executeQuery();
+			int count = 0;
+			if(results.next())
+			{
+
+				count = results.getInt(1);
+			}
+			if (count == 0) 
+			{
+				insertQuery = conn.prepareStatement("insert into productImage (prodid,file_name,file_type,file_size,file_contents)"
+					+ " values(?,?,?,?,?)");
+				insertQuery.setInt(1, id);
+				insertQuery.setString(2, part.getSubmittedFileName());
+				insertQuery.setString(3, part.getContentType());
+				insertQuery.setLong(4, part.getSize());
+				insertQuery.setBinaryStream(5, inputStream);
+			} else 
+			{
+				insertQuery = conn.prepareStatement("update productimage set file_name=?, file_type=?,file_size=?, "
+					+ "file_contents=? where prodid=?");
+				insertQuery.setString(1, part.getSubmittedFileName());
+				insertQuery.setString(2, part.getContentType());
+				insertQuery.setLong(3, part.getSize());
+				insertQuery.setBinaryStream(4, inputStream);
+				insertQuery.setInt(5, id);
+			}
 
 			int result = insertQuery.executeUpdate();
 			if (result == 1) {
@@ -455,5 +507,19 @@ public class StoreBean implements Serializable {
 					size + "bytes: file too big (limit 10MB)", null));
 		}
 	}
+
+	public Part getPart() {
+		return part;
+	}
+
+	public void setPart(Part part) {
+		this.part = part;
+	}
+
+	public void changeImage(int id) {
+		this.imageToChange = id;
+	}
+
+
 
 }

@@ -163,6 +163,18 @@ public abstract class Product implements Serializable {
 		return this.prodprice * this.cartCount;
 	}
 	public abstract String getProductInfo();
+	public boolean inStock()
+	{
+		return this.quantity > 0;
+	}
+	public void subtractQty()
+	{
+		this.quantity--;
+	}
+	public void addQty()
+	{
+		this.quantity++;
+	}
 
 	
 }
