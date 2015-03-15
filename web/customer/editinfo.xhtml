@@ -10,13 +10,12 @@
 		<h:outputStylesheet library="css" name="maincss.css"/>
 	</h:head>
 	<h:body>
-			#{userBean.init()}
-			#{userBean.setCurrentUser()}
+		#{userBean.init()}
 		<b:navBar brand="My Store Of Awesome" brandHref="#" fixed="yes">
 			<b:navbarLinks pull="right">
-				<b:navLink value="Shop" outcome="/customer/customer" rendered="#{userBean.currUser.cust}" />
-				<b:navLink value="Previous Orders" outcome="/customer/prevorders" rendered="#{userBean.currUser.cust}"/>
-				<b:navLink value="Admin" outcome="/admin/admin" rendered="#{userBean.currUser.admin}"/>
+			    <b:navLink value="Shop" outcome="/customer/customer" rendered="#{userBean.checkUserCust()}" />
+			    <b:navLink value="Previous Orders" outcome="/customer/prevorders" rendered="#{userBean.checkUserCust()}"/>
+			    <b:navLink value="Admin" outcome="/admin/admin" rendered="#{userBean.checkUserAdmin()}"/>
 				<b:navLink value="Logout" outcome="/logout" rendered="#{userBean.isLoggedIn()}"/>
 			</b:navbarLinks>	
 		</b:navBar>

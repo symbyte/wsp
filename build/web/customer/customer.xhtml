@@ -18,7 +18,7 @@
 		    <b:navLink value="Edit Information" outcome="editinfo" />
 		    <b:navLink value="Previous Orders" outcome="prevorders" />
 		</b:dropMenu>
-		<b:navLink value="Admin" outcome="/admin/admin" rendered="#{userBean.currUser.admin}"/>
+		<b:navLink value="Admin" outcome="/admin/admin" rendered="#{userBean.checkUserAdmin()}"/>
 		<b:navLink value="Logout" outcome="/logout" rendered="#{userBean.isLoggedIn()}"/>
 	    </b:navbarLinks>	
 	</b:navBar>

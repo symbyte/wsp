@@ -10,6 +10,7 @@ import edu.uco.schambers.ejb.UsersFacade;
 import java.io.IOException;
 import javax.inject.Named;
 import javax.enterprise.context.RequestScoped;
+import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 
@@ -59,9 +60,10 @@ public class validateEmail {
 		Users u = facade.find(userBean.getIdOfEmailBeingValidated());
 		u.setEmail(userBean.getEmailBeingValidated());
 		facade.edit(u);
+		FacesContext context = FacesContext.getCurrentInstance();
 		try {
 
-			FacesContext.getCurrentInstance().getExternalContext().redirect("index.xhtml");
+			FacesContext.getCurrentInstance().getExternalContext().redirect("validatesuccess.xhtml");
 		} catch (IOException e) {
 			//oh no!
 		}

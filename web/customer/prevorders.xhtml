@@ -14,10 +14,10 @@
 	#{storeBean.getOrdersFromDB()}
 	<b:navBar brand="My Store Of Awesome" brandHref="/prog7/faces/customer/customer.xhtml" fixed="top">
 	    <b:navbarLinks pull="right">
-				<b:navLink value="Shop" outcome="/customer/customer" rendered="#{userBean.currUser.cust}" />
-				<b:navLink value="Edit Information" outcome="/customer/editinfo" rendered="#{userBean.currUser.cust}"/>
-				<b:navLink value="Admin" outcome="/admin/admin" rendered="#{userBean.currUser.admin}"/>
-				<b:navLink value="Logout" outcome="/logout" rendered="#{userBean.isLoggedIn()}"/>
+		<b:navLink value="Shop" outcome="/customer/customer" rendered="#{userBean.checkUserCust()}" />
+		<b:navLink value="Edit Information" outcome="/customer/editinfo" rendered="#{userBean.checkUserCust()}"/>
+		<b:navLink value="Admin" outcome="/admin/admin" rendered="#{userBean.checkUserAdmin()}"/>
+		<b:navLink value="Logout" outcome="/logout" rendered="#{userBean.isLoggedIn()}"/>
 	    </b:navbarLinks>	
 	</b:navBar>
 	<br/>
@@ -36,7 +36,7 @@
 					     value="#{order.products}" var="prod">
 				    <f:facet name="caption">Order # #{order.id}
 					<h:outputText value="#{storeBean.millisToDate(order.orderDate)}" style="float:right"/>
-						      <h:outputText style="float:right" value="Date Placed:&nbsp;"/> 
+					<h:outputText style="float:right" value="Date Placed:&nbsp;"/> 
 				    </f:facet>
 				    <h:column>
 					<f:facet name="header">Product</f:facet>
@@ -74,11 +74,11 @@
 	</div>
     </h:body>
     <script>
-	    $(document).ready(function () {
-		$('tr').removeClass("ui-datatable-even ui-datatable-odd ui-widget-content");
-		$('td').removeAttr('role');
-		$('table').removeAttr('role');
-	    });
+            $(document).ready(function () {
+                $('tr').removeClass("ui-datatable-even ui-datatable-odd ui-widget-content");
+                $('td').removeAttr('role');
+                $('table').removeAttr('role');
+            });
     </script>
 </html>
 

@@ -181,7 +181,6 @@ public class UserBean implements Serializable {
 		user.setPassword(password);
 		user.setLastname(lastName);
 		user.setFirstname(firstName);
-		user.setEmail(email);
 		emailBeingValidated = email;
 		user.setAddress(address);
 		usersFacade.create(user);
@@ -314,7 +313,15 @@ public class UserBean implements Serializable {
 		return groupNames.contains("admingroup");
 
 	}
+	public boolean checkUserAdmin() {
+		List<Grouptable> groups = grouptableFacade.findByUser(currUser);
+		List<String> groupNames = new ArrayList<>();
+		for (Grouptable gt : groups) {
+			groupNames.add(gt.getGroupname());
+		}
+		return groupNames.contains("admingroup");
 
+	}
 	public boolean checkUserCust(Users u) {
 
 		List<Grouptable> groups = grouptableFacade.findByUser(u);
@@ -324,7 +331,15 @@ public class UserBean implements Serializable {
 		}
 		return groupNames.contains("customergroup");
 	}
+	public boolean checkUserCust() {
 
+		List<Grouptable> groups = grouptableFacade.findByUser(currUser);
+		List<String> groupNames = new ArrayList<>();
+		for (Grouptable gt : groups) {
+			groupNames.add(gt.getGroupname());
+		}
+		return groupNames.contains("customergroup");
+	}
 	public void setCurrentUser() {
 		String username = FacesContext.getCurrentInstance().getExternalContext().getUserPrincipal().getName();
 		for (Users u : inMemoryUsers) {

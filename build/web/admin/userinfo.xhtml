@@ -14,7 +14,7 @@
 	    #{storeBean.getOrdersFromDB()}
 		<b:navBar brand="My Store Of Awesome" brandHref="/termProject/faces/index.xhtml" fixed="yes">
 			<b:navbarLinks pull="right">
-				<b:navLink value="Shop" outcome="/customer/customer" rendered="#{userBean.currUser.cust}"/>
+			    <b:navLink value="Shop" outcome="/customer/customer" rendered="#{userBean.checkUserCust()}"/>
 				<b:navLink value="Manage Products" outcome="admin"/>
 				<b:navLink value="Logout" outcome="/logout" rendered="#{userBean.isLoggedIn()}"/>
 			</b:navbarLinks>	

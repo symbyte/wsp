@@ -11,9 +11,10 @@
 	<h:outputStylesheet library="css" name="maincss.css"/>
     </h:head>
     <h:body>
+	#{userBean.setCurrentUser()}
 	<b:navBar brand="My Store Of Awesome" brandHref="#" fixed="yes">
 	    <b:navbarLinks pull="right">
-		<b:navLink value="Shop" outcome="/customer/customer" rendered="#{userBean.currUser.cust}" />
+		<b:navLink value="Shop" outcome="/customer/customer" rendered="#{userBean.checkUserCust()}" />
 		<b:navLink value="Manage Users" outcome="userinfo"/>
 		<b:navLink value="Logout" outcome="/logout" rendered="#{userBean.isLoggedIn()}"/>
 	    </b:navbarLinks>	
