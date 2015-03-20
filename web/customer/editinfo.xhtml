@@ -11,6 +11,8 @@
     </h:head>
     <h:body>
 	#{userBean.init()}
+	#{userBean.setCurrentUser()}
+	#{userBean.setCurrUserEditable()}
 	<b:navBar brand="My Store Of Awesome" brandHref="#" fixed="yes">
 	    <b:navbarLinks pull="right">
 		<b:navLink value="Shop" outcome="/customer/customer" rendered="#{userBean.checkUserCust()}" />

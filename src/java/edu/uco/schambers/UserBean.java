@@ -345,7 +345,6 @@ public class UserBean implements Serializable {
 		for (Users u : inMemoryUsers) {
 			if (u.getUsername().equals(username)) {
 				currUser = u;
-				currUser.setEditable(true);
 			}
 		}
 
@@ -405,6 +404,14 @@ public class UserBean implements Serializable {
 		} catch (MessagingException e) {
 			throw new RuntimeException(e);
 		}
+	}
+	public void setCurrUserEditable()
+	{
+		 inMemoryUsers.get(inMemoryUsers.indexOf(currUser)).setEditable(true);
+	}
+	public void updateCurrUserInfo()
+	{
+		
 	}
 
 }
