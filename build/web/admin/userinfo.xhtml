@@ -118,7 +118,7 @@
 	<b:modal id="orderModal" title="Previous orders for #{storeBean.watchedUser}">
 	    <h:form class="pageClass">
 		    <p:dataTable value="#{storeBean.getOrders(storeBean.watchedUser)}"  tableStyleClass="borderless" 
-				 var="order" rows="5" paginator="true" lazy="true">
+				 var="order" rows="3" paginator="true" lazy="true">
 			    <p:column>
 				<h:dataTable class="center eleBorder" rowClasses="evenrows,oddrows" 
 					     captionClass="tableTitle" headerClass="columnTitles" 
