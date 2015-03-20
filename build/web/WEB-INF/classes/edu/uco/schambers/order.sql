@@ -9,6 +9,8 @@ orderdate bigint
 
 create table orders(
 parentorder integer references orderlist(ordernumber) on delete cascade,
-prodid integer references product(prodid) on delete cascade,
+prodid integer,
+description varchar(255),
+price double,
 quantity integer
 );

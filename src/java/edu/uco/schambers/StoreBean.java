@@ -239,11 +239,13 @@ public class StoreBean implements Serializable {
 			}
 			for (Product p : cart) {
 				statement = conn.prepareStatement(
-						"insert into orders(parentorder, prodid, quantity) values(?,?,?)"
+						"insert into orders(parentorder, prodid, quantity, description,price) values(?,?,?,?,?)"
 				);
 				statement.setInt(1, key);
 				statement.setInt(2, p.getProdid());
 				statement.setInt(3, p.getCartCount());
+				statement.setString(4, p.getProductInfo());
+				statement.setDouble(5, p.getProdprice());
 				statement.executeUpdate();
 				if (p instanceof Book) {
 					bookFacade.edit((Book) p);
@@ -300,8 +302,8 @@ public class StoreBean implements Serializable {
 				String orderUser = results.getString("username");
 				Long millisDate = results.getLong("orderdate");
 				PreparedStatement innerStatement = conn.prepareStatement(
-						"Select product.prodid,product.prodtype,orders.quantity"
-						+ " from product inner join orders on orders.parentorder = ? and product.prodid = orders.prodid"
+						"Select orders.prodid,product.prodtype,orders.quantity,orders.description, orders.price"
+						+ " from orders left outer join product on product.prodid = orders.prodid where orders.parentorder = ?"
 				);
 				innerStatement.setInt(1, orderKey);
 				ResultSet innerResults = innerStatement.executeQuery();
@@ -311,20 +313,37 @@ public class StoreBean implements Serializable {
 					int id = innerResults.getInt("prodid");
 					String prodType = innerResults.getString("prodtype");
 					int cartCount = innerResults.getInt("quantity");
+					String desc = innerResults.getString("description");
+					double price = innerResults.getDouble("price");
 					Product p;
+					DeletedProduct dp;
+					if(prodType==null)
+					{
+						prodType = "deleted";
+					}
 					switch (prodType) {
 						case "S":
 							p = sharkFacade.find(id);
 							p.setCartCount(cartCount);
+							p.setProdprice(price);
 							break;
 						case "B":
 							p = bookFacade.find(id);
 							p.setCartCount(cartCount);
+							p.setProdprice(price);
 							break;
-						default:
+						case "J":
 							p = jetpackFacade.find(id);
 							p.setCartCount(cartCount);
+							p.setProdprice(price);
 							break;
+						default:
+							dp = new DeletedProduct();
+							dp.setProductInfo(desc);
+							dp.setProdprice(price);
+							dp.setCartCount(cartCount);
+							p = (Product) dp;
+								
 					}
 
 					productList.add(p);
