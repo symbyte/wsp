@@ -28,7 +28,7 @@
 		    <h:form>
 
 			<b:panelGrid colSpans="6,6" class="eleBorder signIn">
-			    <b:inputText id="username" label="Username: " value="#{userBean.currUser.username}"/>
+			    <b:inputText id="username" label="Username: " disabled="true" value="#{userBean.currUser.username}"/>
 			    <h:message for="username" errorStyle="color:red" infoStyle="color:green"/>
 			    <b:inputText id="firstName" label="First Name: " value="#{userBean.currUser.firstname}"/>
 			    <h:message for="firstName" errorStyle="color:red" infoStyle="color:green"/>

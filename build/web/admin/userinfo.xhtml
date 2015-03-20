@@ -116,15 +116,17 @@
 		</b:container>
 	</h:body>
 	<b:modal id="orderModal" title="Previous orders for #{storeBean.watchedUser}">
-		<h:form>
-			<ui:repeat value="#{storeBean.getOrders(storeBean.watchedUser)}" var="order">
-								<h:dataTable class="center eleBorder" rowClasses="evenrows,oddrows" 
+	    <h:form class="pageClass">
+		    <p:dataTable value="#{storeBean.getOrders(storeBean.watchedUser)}"  tableStyleClass="borderless" 
+				 var="order" rows="5" paginator="true" lazy="true">
+			    <p:column>
+				<h:dataTable class="center eleBorder" rowClasses="evenrows,oddrows" 
 					     captionClass="tableTitle" headerClass="columnTitles" 
 					     columnClasses="title, author, price, quantity"
 					     value="#{order.products}" var="prod">
 				    <f:facet name="caption">Order # #{order.id}
 					<h:outputText value="#{storeBean.millisToDate(order.orderDate)}" style="float:right"/>
-						      <h:outputText style="float:right" value="Date Placed:&nbsp;"/> 
+					<h:outputText style="float:right" value="Date Placed:&nbsp;"/> 
 				    </f:facet>
 				    <h:column>
 					<f:facet name="header">Product</f:facet>
@@ -148,7 +150,8 @@
 				    </f:facet>
 				</h:dataTable>
 				<br/>
-			</ui:repeat>
+			    </p:column>
+			</p:dataTable>
 		</h:form>
 	</b:modal>
 </html>
