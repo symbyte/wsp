@@ -9,8 +9,8 @@
 	<title></title>
 	<h:outputStylesheet library="css" name="maincss.css"/>
     </h:head>
-	#{storeBean.getProductListFromDB()}
-	#{userBean.setCurrentUser()}
+    #{storeBean.getProductListFromDB()}
+    #{userBean.setCurrentUser()}
     <h:body>
 	<b:navBar brand="My Store Of Awesome" brandHref="#" fixed="top">
 	    <b:navbarLinks pull="right">
@@ -34,9 +34,9 @@
 		<b:column span="2"/>
 		<b:column span="8">
 
-			<b:tabView>
-			    <b:tab title="Books">
-				<h:form id="bookQty">
+		    <b:tabView>
+			<b:tab title="Books">
+			    <h:form id="bookQty">
 				<p:dataTable  paginator="true" rows="5" paginatorPosition="bottom" tableStyle="width:auto"
 					      paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} 
 					      {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}" 
@@ -75,17 +75,17 @@
 				    </p:column>
 				    <p:column>
 					<h:outputText value="Out of Stock!" style="color:red;" rendered="#{not item.inStock()}"/>
-					<b:commandButton ajax ="true" update="cartContents total sharkQty bookQty jetpackQty" 
+					<b:commandButton ajax ="true" update="cartContents cartModalForm total sharkQty bookQty jetpackQty" 
 							 value="Add to cart" rendered="#{item.inStock()}" 
 							 action="#{storeBean.addItem(item)}"
 							 onclick="this.blur()">
 					</b:commandButton>
 				    </p:column>
 				</p:dataTable>
-						</h:form>
-			    </b:tab>
-			    <b:tab title="Shark Repellent">
-								<h:form id="sharkQty">
+			    </h:form>
+			</b:tab>
+			<b:tab title="Shark Repellent">
+			    <h:form id="sharkQty">
 
 				<p:dataTable  paginator="true" rows="5" paginatorPosition="bottom" tableStyle="width:auto"
 					      paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} 
@@ -125,17 +125,17 @@
 				    </p:column>
 				    <p:column>
 					<h:outputText value="Out of Stock!" style="color:red;" rendered="#{not item.inStock()}"/>
-					<b:commandButton ajax ="true" update="cartContents total sharkQty bookQty jetpackQty" 
+					<b:commandButton ajax ="true" update="cartContents cartModalForm total sharkQty bookQty jetpackQty" 
 							 value="Add to cart" rendered="#{item.inStock()}" 
 							 action="#{storeBean.addItem(item)}"
 							 onclick="this.blur()">
 					</b:commandButton>	
 				    </p:column>
 				</p:dataTable>
-						</h:form>
-			    </b:tab>
-			    <b:tab title="Jetpacks">
-								<h:form id="jetpackQty">
+			    </h:form>
+			</b:tab>
+			<b:tab title="Jetpacks">
+			    <h:form id="jetpackQty">
 
 				<p:dataTable  paginator="true" rows="5" paginatorPosition="bottom" tableStyle="width:auto"
 					      paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} 
@@ -175,16 +175,16 @@
 				    </p:column>
 				    <p:column>
 					<h:outputText value="Out of Stock!" style="color:red;" rendered="#{not item.inStock()}"/>
-					<b:commandButton ajax ="true" update="cartContents total bookQty jetpackQty sharkQty" 
+					<b:commandButton ajax ="true" update="cartContents cartModalForm total bookQty jetpackQty sharkQty" 
 							 value="Add to cart" rendered="#{item.inStock()}" 
 							 action="#{storeBean.addItem(item)}"
 							 onclick="this.blur()">
 					</b:commandButton>	
 				    </p:column>
 				</p:dataTable>
-						</h:form>
-			    </b:tab>
-			</b:tabView>
+			    </h:form>
+			</b:tab>
+		    </b:tabView>
 		</b:column>
 		<b:column span="2"/>
 	    </b:row>
@@ -225,7 +225,7 @@
 				</h:outputText>
 			    </p:column>	
 			    <p:column>
-				<b:commandButton value="Remove One" ajax="true"  update="cartContents total sharkQty bookQty jetpackQty"
+				<b:commandButton value="Remove One" ajax="true"  update="cartContents cartModalForm total sharkQty bookQty jetpackQty"
 						 action="#{storeBean.removeItem(item)}"
 						 >
 				</b:commandButton>
@@ -233,8 +233,8 @@
 			    <f:facet name="footer">
 				<b:row>
 				    <b:column span ="2">
-					<b:commandButton style="float:left" ajax="true" update="cartContents total sharkQty bookQty jetpackQty" 
-							 value="Check Out" action="#{storeBean.checkOut()}">
+					<b:commandButton style="float:left" ajax="true" 
+							 value="Check Out" onclick="$('#cartModal').modal('show');">
 					</b:commandButton>
 				    </b:column>
 				</b:row>
@@ -263,6 +263,41 @@
 	    &copy;2015 FourBooksAndAWarmCup
 	</div>
     </h:body>
+    <b:modal id="cartModal" title="Please confirm your order for the following items:">
+	<h:form id="cartModalForm">
+	    <h:dataTable class="center eleBorder" rowClasses="evenrows,oddrows" 
+			 captionClass="tableTitle" headerClass="columnTitles" 
+			 columnClasses="title, author, price, quantity"
+			 value="#{storeBean.cart}" var="prod">
+		<h:column>
+		    <f:facet name="header">Product</f:facet>
+			#{prod.getProductInfo()}
+		</h:column>
+		<h:column>
+		    <f:facet name="header">Unit Price</f:facet>
+		    <h:outputText value="#{prod.prodprice}">
+			<f:convertNumber type="currency" currencySymbol="$"/>
+		    </h:outputText>
+		</h:column>
+		<h:column>
+		    <f:facet name="header">Quantity</f:facet>
+			#{prod.getCartCount()}
+		</h:column>
+		<f:facet name="footer" >
+		    <h:outputText value ="#{storeBean.cartTotal}" style ="float:right">
+			<f:convertNumber type="currency" currencySymbol="$"/>
+		    </h:outputText>
+		    <h:outputText style="float:right; font-weight: bold" value="Total:&nbsp;"/>
+		</f:facet>
+	    </h:dataTable>
+	</h:form>
+	<f:facet name="footer">
+	    <h:form>
+		<b:button value="Cancel" dismiss="modal" look="danger" onclick="return false;"/>
+		<b:commandButton value="Place Order" look ="success" action="#{storeBean.checkOut()}"/>
+	    </h:form>
+	</f:facet>
+    </b:modal>
     <script type="text/javascript">
             $(document).ready(function () {
                 $(".active").click(function () {
