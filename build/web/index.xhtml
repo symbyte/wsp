@@ -20,10 +20,15 @@
 		<b:navLink value="Logout" outcome="logout" rendered="#{userBean.isLoggedIn()}"/>
 	    </b:navbarLinks>	
 	</b:navBar>
-	<h:messages infoStyle="color:green" class="center" globalOnly="true"/>
+
 	<br/>
 	<br/>
 	<b:container>
+	    <b:row>
+		<b:column span="6" offset="3">
+		    <h:messages infoClass="facesAlert" globalOnly="true"/>
+		</b:column>
+	    </b:row>
 	    <b:row>
 		<b:column span="2"/>
 		<b:column span ="8">
@@ -56,15 +61,15 @@
 				    </p:column>
 				    <p:column>
 					<f:facet name="header">Pages</f:facet>
-					#{item.pages}
+					    #{item.pages}
 				    </p:column>
 				    <p:column>
 					<f:facet name="header">Quantity</f:facet>
-					#{item.quantity}
+					    #{item.quantity}
 				    </p:column>
 				    <p:column>
 					<f:facet name="header">Product #</f:facet>
-					#{item.prodid}
+					    #{item.prodid}
 				    </p:column>
 				</p:dataTable>
 			    </b:tab>
@@ -95,15 +100,15 @@
 				    </p:column>
 				    <p:column>
 					<f:facet name="header">Engine Size</f:facet>
-					#{item.enginesize}
+					    #{item.enginesize}
 				    </p:column>
 				    <p:column>
 					<f:facet name="header">Quantity</f:facet>
-					#{item.quantity}
+					    #{item.quantity}
 				    </p:column>
 				    <p:column>
 					<f:facet name="header">Product #</f:facet>
-					#{item.prodid}
+					    #{item.prodid}
 				    </p:column>
 				</p:dataTable>
 			    </b:tab>
@@ -134,15 +139,15 @@
 				    </p:column>
 				    <p:column>
 					<f:facet name="header">Volume</f:facet>
-					#{item.volume}
+					    #{item.volume}
 				    </p:column>
 				    <p:column>
 					<f:facet name="header">Quantity</f:facet>
-					#{item.quantity}
+					    #{item.quantity}
 				    </p:column>
 				    <p:column>
 					<f:facet name="header">Product #</f:facet>
-					#{item.prodid}
+					    #{item.prodid}
 				    </p:column>
 				</p:dataTable>
 			    </b:tab>

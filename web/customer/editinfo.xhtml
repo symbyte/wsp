@@ -23,6 +23,11 @@
 	</b:navBar>
 	<b:container>
 	    <b:row>
+		<b:column span="6" offset="3">
+		    <h:messages  infoClass="facesAlert" globalOnly="true"/>
+		</b:column>
+	    </b:row>
+	    <b:row>
 
 		<b:column span="6" offset="3">
 		    <h:form>
@@ -45,7 +50,6 @@
 			    <h:panelGroup/>
 			    <b:commandButton value="Update Information"  action="#{userBean.updateUserDB()}"/>
 			</b:panelGrid>
-			<h:messages infoStyle="color:green" globalOnly="true"/>
 		    </h:form>
 		</b:column>
 	    </b:row>
