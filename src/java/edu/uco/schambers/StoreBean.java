@@ -592,35 +592,35 @@ public class StoreBean implements Serializable {
 		StringBuilder invoiceBody = new StringBuilder();
 		invoiceBody.append("<p>Hey ");
 		invoiceBody.append(o.getUser());
-		invoiceBody.append(",<br/>");
+		invoiceBody.append(",<br/><br/>");
 		invoiceBody.append("Here is the invoice for you most recent order:</p><br/><br/>");
-		invoiceBody.append("<table align='center'>");
-		invoiceBody.append("<tr><td>Product</td>");
-		invoiceBody.append("<td width='100px;' style='text-align:center;'>Quantity: </td>");
-		invoiceBody.append("<td width='200px;' style='text-align:center;'>Price: </td>");
-		invoiceBody.append("<td width='200px;' style='text-align:center;'>Subtotal: </td>");
-		invoiceBody.append("<hr/>");
+		invoiceBody.append("<table align='center' style='border: 1px solid #cecece; border-radius:5px; background-color:whitesmoke; padding:10px;'"); 
+						
+		invoiceBody.append("<tr><td style='border-bottom: 1px solid #cecece'>Product</td>");
+		invoiceBody.append("<td width='100px;' style='text-align:center; border-bottom: 1px solid #cecece'>Quantity: </td>");
+		invoiceBody.append("<td width='200px;' style='text-align:center; border-bottom: 1px solid #cecece'>Price: </td>");
+		invoiceBody.append("<td width='200px;' style='text-align:center; border-bottom: 1px solid #cecece'>Subtotal: </td>");
 		for (Product p : o.getProducts()) {
 			invoiceBody.append("<tr>");
-			invoiceBody.append("<td>");
+			invoiceBody.append("<td style='padding:10px;'>");
 			invoiceBody.append(p.getProductInfo());
 			invoiceBody.append("</td>");
-			invoiceBody.append("<td style='text-align:right;'>");
+			invoiceBody.append("<td style='text-align:right; padding 10px;'>");
 			invoiceBody.append(p.getCartCount());
 			invoiceBody.append("</td>");
-			invoiceBody.append("<td style='text-align:right;'>");
+			invoiceBody.append("<td style='text-align:right; padding 10px;'>");
 			invoiceBody.append(formatter.format(p.getProdprice()));
 			invoiceBody.append("</td>");
-			invoiceBody.append("<td style='text-align:right;'>");
+			invoiceBody.append("<td style='text-align:right; padding 10px;'>");
 			invoiceBody.append(formatter.format(p.calcSub()));
 			invoiceBody.append("</td>");
 			invoiceBody.append("</tr>");
 		}
 			invoiceBody.append("<tr>");
 			invoiceBody.append("<td></td><td></td><td></td>");
-		invoiceBody.append("<td style='text-align:right;'><strong>Total</strong>: ");
+		invoiceBody.append("<td style='text-align:right; padding-top:15px; border-top:1px solid #cecece'><strong>Total</strong>: ");
 		invoiceBody.append(formatter.format(o.getTotal()));
-		invoiceBody.append("</td></tr></table><br/><hr/><br/>");
+		invoiceBody.append("</span></td></tr></table><br/><br/>");
 		invoiceBody.append("<p>Thank you for your order!<br/>The Store of Awesome Team</p>");
 
 		return invoiceBody.toString();

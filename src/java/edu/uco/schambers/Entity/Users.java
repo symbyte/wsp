@@ -48,10 +48,12 @@ public class Users implements Serializable {
 	@Size(max = 255)
 	@Column(name = "USERNAME")
 	private String username;
-	@Size(max = 20)
+	@Size(max = 20, message = "First name must be shorter than 20 characters")
+	@Pattern(regexp = "[a-zA-Z][a-zA-Z]*", message = "First name must have only alphabetical characters")
 	@Column(name = "FIRSTNAME")
 	private String firstname;
-	@Size(max = 20)
+	@Size(max = 20, message = "First name must be shorter than 20 characters")
+	@Pattern(regexp = "[a-zA-Z][a-zA-Z]*", message = "First name must have only alphabetical characters")
 	@Column(name = "LASTNAME")
 	private String lastname;
 	// @Pattern(regexp="[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?", message="Invalid email")//if the field contains email address consider using this annotation to enforce field validation
@@ -59,7 +61,7 @@ public class Users implements Serializable {
 	@Column(name = "EMAIL")
 	@Pattern(regexp = ".*@.*[.].*", message = "The address provided is not valid.")
 	private String email;
-	@Size(max = 64)
+	@Size(min = 3, max = 64, message = "password must be between 3 and 63 digits long")
 	@Column(name = "PASSWORD")
 	private String password;
 	@Size(max = 12)
