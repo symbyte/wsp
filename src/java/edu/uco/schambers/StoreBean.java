@@ -224,7 +224,7 @@ public class StoreBean implements Serializable {
 		try {
 			String currUser = FacesContext.getCurrentInstance().getExternalContext().getUserPrincipal().getName();
 			PreparedStatement statement = conn.prepareStatement(
-				"insert into orderlist (total, username,orderdate) values (?,?,?)", Statement.RETURN_GENERATED_KEYS
+					"insert into orderlist (total, username,orderdate) values (?,?,?)", Statement.RETURN_GENERATED_KEYS
 			);
 			statement.setDouble(1, cartTotal);
 			statement.setString(2, currUser);
@@ -240,7 +240,7 @@ public class StoreBean implements Serializable {
 			}
 			for (Product p : cart) {
 				statement = conn.prepareStatement(
-					"insert into orders(parentorder, prodid, quantity, description,price) values(?,?,?,?,?)"
+						"insert into orders(parentorder, prodid, quantity, description,price) values(?,?,?,?,?)"
 				);
 				statement.setInt(1, key);
 				statement.setInt(2, p.getProdid());
@@ -300,7 +300,7 @@ public class StoreBean implements Serializable {
 		List<Order> orders = new ArrayList<>();
 		try {
 			PreparedStatement statement = conn.prepareStatement(
-				"select * from orderlist"
+					"select * from orderlist"
 			);
 			ResultSet results = statement.executeQuery();
 			while (results.next()) {
@@ -309,8 +309,8 @@ public class StoreBean implements Serializable {
 				String orderUser = results.getString("username");
 				Long millisDate = results.getLong("orderdate");
 				PreparedStatement innerStatement = conn.prepareStatement(
-					"Select orders.prodid,product.prodtype,orders.quantity,orders.description, orders.price"
-					+ " from orders left outer join product on product.prodid = orders.prodid where orders.parentorder = ?"
+						"Select orders.prodid,product.prodtype,orders.quantity,orders.description, orders.price"
+						+ " from orders left outer join product on product.prodid = orders.prodid where orders.parentorder = ?"
 				);
 				innerStatement.setInt(1, orderKey);
 				ResultSet innerResults = innerStatement.executeQuery();
@@ -469,7 +469,7 @@ public class StoreBean implements Serializable {
 		try {
 			inputStream = part.getInputStream();
 			PreparedStatement insertQuery = conn.prepareStatement(
-				"select count(*) from productImage where prodid=?");
+					"select count(*) from productImage where prodid=?");
 			insertQuery.setInt(1, id);
 			ResultSet results = insertQuery.executeQuery();
 			int count = 0;
@@ -479,7 +479,7 @@ public class StoreBean implements Serializable {
 			}
 			if (count == 0) {
 				insertQuery = conn.prepareStatement("insert into productImage (prodid,file_name,file_type,file_size,file_contents)"
-					+ " values(?,?,?,?,?)");
+						+ " values(?,?,?,?,?)");
 				insertQuery.setInt(1, id);
 				insertQuery.setString(2, part.getSubmittedFileName());
 				insertQuery.setString(3, part.getContentType());
@@ -487,7 +487,7 @@ public class StoreBean implements Serializable {
 				insertQuery.setBinaryStream(5, inputStream);
 			} else {
 				insertQuery = conn.prepareStatement("update productimage set file_name=?, file_type=?,file_size=?, "
-					+ "file_contents=? where prodid=?");
+						+ "file_contents=? where prodid=?");
 				insertQuery.setString(1, part.getSubmittedFileName());
 				insertQuery.setString(2, part.getContentType());
 				insertQuery.setLong(3, part.getSize());
@@ -498,19 +498,19 @@ public class StoreBean implements Serializable {
 			int result = insertQuery.executeUpdate();
 			if (result == 1) {
 				facesContext.addMessage("uploadForm:upload",
-					new FacesMessage(FacesMessage.SEVERITY_INFO,
-						part.getSubmittedFileName()
-						+ ": uploaded successfuly !!", null));
+						new FacesMessage(FacesMessage.SEVERITY_INFO,
+								part.getSubmittedFileName()
+								+ ": uploaded successfuly !!", null));
 			} else {
 				// if not 1, it must be an error.
 				facesContext.addMessage("uploadForm:upload",
-					new FacesMessage(FacesMessage.SEVERITY_ERROR,
-						result + " file uploaded", null));
+						new FacesMessage(FacesMessage.SEVERITY_ERROR,
+								result + " file uploaded", null));
 			}
 		} catch (IOException e) {
 			facesContext.addMessage("uploadForm:upload",
-				new FacesMessage(FacesMessage.SEVERITY_ERROR,
-					"File upload failed !!", null));
+					new FacesMessage(FacesMessage.SEVERITY_ERROR,
+							"File upload failed !!", null));
 		} finally {
 			if (inputStream != null) {
 				inputStream.close();
@@ -524,20 +524,20 @@ public class StoreBean implements Serializable {
 	public void validateFile(FacesContext ctx, UIComponent comp, Object value) {
 		if (value == null) {
 			throw new ValidatorException(
-				new FacesMessage(FacesMessage.SEVERITY_ERROR,
-					"Select a file to upload", null));
+					new FacesMessage(FacesMessage.SEVERITY_ERROR,
+							"Select a file to upload", null));
 		}
 		Part file = (Part) value;
 		long size = file.getSize();
 		if (size <= 0) {
 			throw new ValidatorException(
-				new FacesMessage(FacesMessage.SEVERITY_ERROR,
-					"the file is empty", null));
+					new FacesMessage(FacesMessage.SEVERITY_ERROR,
+							"the file is empty", null));
 		}
 		if (size > 1024 * 1024 * 10) { // 10 MB limit
 			throw new ValidatorException(
-				new FacesMessage(FacesMessage.SEVERITY_ERROR,
-					size + "bytes: file too big (limit 10MB)", null));
+					new FacesMessage(FacesMessage.SEVERITY_ERROR,
+							size + "bytes: file too big (limit 10MB)", null));
 		}
 	}
 
@@ -562,21 +562,21 @@ public class StoreBean implements Serializable {
 		props.put("mail.smtp.starttls.enable", "true");
 		props.put("mail.smtp.host", "smtp.gmail.com");
 		props.put("mail.smtp.port", "587");
-		String body = parseOrder(o);
+		String body = parseHtmlFromOrder(o);
 		Session mailSession = Session.getInstance(props,
-			new javax.mail.Authenticator() {
-				protected PasswordAuthentication getPasswordAuthentication() {
-					return new PasswordAuthentication(username, password);
-				}
-			});
+				new javax.mail.Authenticator() {
+					protected PasswordAuthentication getPasswordAuthentication() {
+						return new PasswordAuthentication(username, password);
+					}
+				});
 		try {
 			String recip = usersFacade.findByUsername(o.getUser()).get(0).getEmail();
 			Message message = new MimeMessage(mailSession);
 			message.setFrom(new InternetAddress("awesomestore@gmail.com"));
 			message.setRecipients(Message.RecipientType.TO,
-				InternetAddress.parse(recip));
+					InternetAddress.parse(recip));
 			message.setSubject("Your Recent Order");
-			message.setText(body);
+			message.setContent(body,"text/html; charset=utf-8");
 
 			Transport.send(message);
 
@@ -587,31 +587,41 @@ public class StoreBean implements Serializable {
 		}
 	}
 
-	public String parseOrder(Order o) {
+	public String parseHtmlFromOrder(Order o) {
 		NumberFormat formatter = NumberFormat.getCurrencyInstance();
 		StringBuilder invoiceBody = new StringBuilder();
-		invoiceBody.append("Hey ");
+		invoiceBody.append("<p>Hey ");
 		invoiceBody.append(o.getUser());
-		invoiceBody.append(",\n");
-		invoiceBody.append("Here is the invoice for you most recent order:\n\n");
+		invoiceBody.append(",<br/>");
+		invoiceBody.append("Here is the invoice for you most recent order:</p><br/><br/>");
+		invoiceBody.append("<table align='center'>");
+		invoiceBody.append("<tr><td>Product</td>");
+		invoiceBody.append("<td width='100px;' style='text-align:center;'>Quantity: </td>");
+		invoiceBody.append("<td width='200px;' style='text-align:center;'>Price: </td>");
+		invoiceBody.append("<td width='200px;' style='text-align:center;'>Subtotal: </td>");
+		invoiceBody.append("<hr/>");
 		for (Product p : o.getProducts()) {
-			invoiceBody.append("Product: ");
+			invoiceBody.append("<tr>");
+			invoiceBody.append("<td>");
 			invoiceBody.append(p.getProductInfo());
-			invoiceBody.append("\n");
-			invoiceBody.append("Quantity: ");
+			invoiceBody.append("</td>");
+			invoiceBody.append("<td style='text-align:right;'>");
 			invoiceBody.append(p.getCartCount());
-			invoiceBody.append("\n");
-			invoiceBody.append("Price: ");
+			invoiceBody.append("</td>");
+			invoiceBody.append("<td style='text-align:right;'>");
 			invoiceBody.append(formatter.format(p.getProdprice()));
-			invoiceBody.append("\n");
-			invoiceBody.append("Subtotal: ");
+			invoiceBody.append("</td>");
+			invoiceBody.append("<td style='text-align:right;'>");
 			invoiceBody.append(formatter.format(p.calcSub()));
-			invoiceBody.append("\n\n");
+			invoiceBody.append("</td>");
+			invoiceBody.append("</tr>");
 		}
-		invoiceBody.append("Total: ");
+			invoiceBody.append("<tr>");
+			invoiceBody.append("<td></td><td></td><td></td>");
+		invoiceBody.append("<td style='text-align:right;'><strong>Total</strong>: ");
 		invoiceBody.append(formatter.format(o.getTotal()));
-		invoiceBody.append("\n\n");
-		invoiceBody.append("Thank you for your order!\nThe Store of Awesome Team");
+		invoiceBody.append("</td></tr></table><br/><hr/><br/>");
+		invoiceBody.append("<p>Thank you for your order!<br/>The Store of Awesome Team</p>");
 
 		return invoiceBody.toString();
 	}
