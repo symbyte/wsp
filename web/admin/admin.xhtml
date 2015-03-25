@@ -127,7 +127,6 @@
 					<h:selectBooleanCheckbox value ="#{item.editable}" onclick="submit()"/>
 				    </p:column>
 				    <p:column width="160">
-					<f:facet name="header">Image</f:facet>
 					<image src="ImageServlet?prodid=#{item.prodid}"
 					       height="150" width="160" />
 					<b:commandButton ajax="true" update="booklist" value="Change Image" 
@@ -210,7 +209,6 @@
 					<h:selectBooleanCheckbox value ="#{item.editable}" onclick="submit()"/>
 				    </p:column>
 				    <p:column width="160">
-					<f:facet name="header">Image</f:facet>
 					<image src="ImageServlet?prodid=#{item.prodid}"
 					       height="150" width="160" />
 					<b:commandButton ajax="true" update="booklist" value="Change Image" 

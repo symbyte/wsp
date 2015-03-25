@@ -22,7 +22,9 @@
 	</b:navBar>
 	<b:container>
 	    <b:row>
-
+		<b:column span="6" offset="3">
+				<h:messages infoClass="facesAlertSuccess" errorClass="facesAlertFailure" globalOnly="true"/>
+		</b:column>
 		<b:column span="6" offset="3">
 		    <h:form>
 
@@ -44,7 +46,6 @@
 			    <h:panelGroup/>
 			    <b:commandButton value="Sign Up"  action="#{userBean.signUp}"/>
 			</b:panelGrid>
-			<h:messages infoStyle="color:green" globalOnly="true"/>
 		    </h:form>
 		</b:column>
 	    </b:row>

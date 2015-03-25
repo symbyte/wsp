@@ -31,6 +31,7 @@ import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+import javax.print.attribute.standard.Severity;
 import javax.sql.DataSource;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
@@ -174,25 +175,37 @@ public class UserBean implements Serializable {
 	}
 
 	public String signUp() throws SQLException {
-		this.password = SHA256Encrypt.encrypt(password);
-		Users user = new Users();
-		user.setUsername(username);
-		user.setPhonenum(phoneNum);
-		user.setPassword(password);
-		user.setLastname(lastName);
-		user.setFirstname(firstName);
-		emailBeingValidated = email;
-		user.setAddress(address);
-		usersFacade.create(user);
-		idOfEmailBeingValidated = usersFacade.findByUsername(username).get(0).getId();
-		sendEmailValidationLink();
-		Grouptable group = new Grouptable(username, "customergroup");
-		grouptableFacade.create(group);
-		inMemoryUsers.add(user);
-		FacesContext context = FacesContext.getCurrentInstance();
-		FacesMessage success = new FacesMessage("You have successfully signed up! Check your email and follow the instructions.");
-		context.addMessage(null, success);
-		return "/index";
+		if(!usernameIsUnique(username))
+		{
+			FacesContext context = FacesContext.getCurrentInstance();
+			FacesMessage fail= new FacesMessage("That username is already in use, please choose a different user name.");
+			fail.setSeverity(FacesMessage.SEVERITY_ERROR);
+			context.addMessage(null, fail);
+			return null;
+		}
+		else
+		{
+			this.password = SHA256Encrypt.encrypt(password);
+			Users user = new Users();
+			user.setUsername(username);
+			user.setPhonenum(phoneNum);
+			user.setPassword(password);
+			user.setLastname(lastName);
+			user.setFirstname(firstName);
+			emailBeingValidated = email;
+			user.setAddress(address);
+			usersFacade.create(user);
+			idOfEmailBeingValidated = usersFacade.findByUsername(username).get(0).getId();
+			sendEmailValidationLink();
+			Grouptable group = new Grouptable(username, "customergroup");
+			grouptableFacade.create(group);
+			inMemoryUsers.add(user);
+			FacesContext context = FacesContext.getCurrentInstance();
+			FacesMessage success = new FacesMessage("You have successfully signed up! Check your email and follow the instructions.");
+			context.addMessage(null, success);
+			return "/index";
+
+		}
 	}
 
 	public List<Users> getUsers() throws SQLException {
@@ -412,6 +425,18 @@ public class UserBean implements Serializable {
 	public void updateCurrUserInfo()
 	{
 		
+	}
+	public boolean usernameIsUnique(String uname)
+	{
+		boolean isUnique = true;
+		for(Users m: inMemoryUsers)	
+		{
+			if(m.getUsername().equalsIgnoreCase(uname))
+			{
+				isUnique=false;
+			}
+		}
+		return isUnique;
 	}
 
 }
