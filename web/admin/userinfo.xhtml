@@ -115,10 +115,10 @@
 	    </b:row>
 	</b:container>
     </h:body>
-    <b:modal id="orderModal" title="Previous orders for #{storeBean.watchedUser}">
+    <b:modal id="orderModal"  title="Previous orders for #{storeBean.watchedUser}">
 	<h:form class="pageClass">
-	    <p:dataTable value="#{storeBean.getOrders(storeBean.watchedUser)}"  tableStyleClass="borderless" 
-			 var="order" rows="3" paginator="true" lazy="true">
+			<p:dataTable value="#{storeBean.getOrders(storeBean.watchedUser)}"   paginatorAlwaysVisible="false"
+						 var="order" rows="5" paginator="true">
 		<p:column>
 		    <h:dataTable class="center eleBorder" rowClasses="evenrows,oddrows" 
 				 captionClass="tableTitle" headerClass="columnTitles" 

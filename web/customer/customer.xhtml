@@ -42,15 +42,14 @@
 		    <b:tabView>
 			<b:tab title="Books">
 			    <h:form id="bookQty">
-				<p:dataTable  paginator="true" rows="5" tableStyle="width:auto"
+						<p:dataTable  paginator="true"  paginatorAlwaysVisible="false" rows="5" tableStyle="width:auto"
 					      paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} 
 					      {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}" 
 					      value="#{storeBean.bookList}" 
 					      var="item">
 				    <p:column width="160">
-					<f:facet name="header">Image</f:facet>
 					<image src="ImageServlet?prodid=#{item.prodid}"
-					       height="150" width="160" />
+					       height="150" width="150" />
 				    </p:column>
 				    <p:column>
 					<f:facet name="header">Title</f:facet>
@@ -95,7 +94,7 @@
 				<p:dataTable  paginator="true" rows="5" tableStyle="width:auto"
 					      paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} 
 					      {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}" 
-					      value="#{storeBean.sharkList}" 
+						  value="#{storeBean.sharkList}"  paginatorAlwaysVisible="false"
 					      var="item">
 				    <p:column width="160">
 					<f:facet name="header">Image</f:facet>
@@ -145,7 +144,7 @@
 				<p:dataTable  paginator="true" rows="5" tableStyle="width:auto"
 					      paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} 
 					      {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}" 
-					      value="#{storeBean.jetpackList}" 
+						  value="#{storeBean.jetpackList}"  paginatorAlwaysVisible="false"
 					      var="item">
 				    <p:column width="160">
 					<f:facet name="header">Image</f:facet>

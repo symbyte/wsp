@@ -28,7 +28,8 @@
 		<b:row>
 		    <b:column class="pageClass" span="8" offset="2">
 
-			<p:dataTable value="#{storeBean.getOrders(null)}"  tableStyleClass="borderless" var="order" rows="5" paginator="true" lazy="true">
+					<p:dataTable value="#{storeBean.getOrders(null)}"  tableStyleClass="borderless" var="order" 
+								 rows="5" paginator="true" paginatorAlwaysVisible="false" lazy="true">
 			    <p:column>
 				<h:dataTable class="center eleBorder" rowClasses="evenrows,oddrows" 
 					     captionClass="tableTitle" headerClass="columnTitles" 

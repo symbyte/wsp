@@ -160,3 +160,7 @@ div#nostuff
     border: 1px solid #B2DBA1;
     border-radius: 4px;
 }
+.modal .modal-body {
+    max-height: 600px;
+    overflow-y: auto;
+}
