@@ -80,7 +80,9 @@
 									</p:column>
 									<p:column>
 										<h:outputText value="Out of Stock!" style="color:red;" rendered="#{not item.inStock()}"/>
-										<b:commandButton ajax ="true" update="cartContents cartIcon cartModalForm cartFooter sharkQty bookQty jetpackQty" 
+										<b:commandButton ajax ="true" update="cartButtons cartIcon cartModalForm 
+														 cartFooter sharkQty bookQty jetpackQty" 
+														 look="primary"
 														 value="Add to cart" rendered="#{item.inStock()}" 
 														 action="#{storeBean.addItem(item)}"
 														 onclick="this.blur()">
@@ -130,7 +132,9 @@
 									</p:column>
 									<p:column>
 										<h:outputText value="Out of Stock!" style="color:red;" rendered="#{not item.inStock()}"/>
-										<b:commandButton ajax ="true" update="cartContents cartIcon cartModalForm cartFooter sharkQty bookQty jetpackQty" 
+										<b:commandButton ajax ="true" update="cartButtons cartIcon cartModalForm 
+														 cartFooter sharkQty bookQty jetpackQty" 
+														 look="primary"
 														 value="Add to cart" rendered="#{item.inStock()}" 
 														 action="#{storeBean.addItem(item)}"
 														 onclick="this.blur()">
@@ -180,7 +184,9 @@
 									</p:column>
 									<p:column>
 										<h:outputText value="Out of Stock!" style="color:red;" rendered="#{not item.inStock()}"/>
-										<b:commandButton ajax ="true" update="cartContents cartIcon cartModalForm cartFooter bookQty jetpackQty sharkQty" 
+										<b:commandButton ajax ="true" update="cartButtons  cartIcon cartModalForm cartFooter
+														 nostuff bookQty jetpackQty sharkQty" 
+														 look="primary"
 														 value="Add to cart" rendered="#{item.inStock()}" 
 														 action="#{storeBean.addItem(item)}"
 														 onclick="this.blur()">
@@ -196,78 +202,6 @@
 		</b:container>
 		<br/>
 		<br/>
-		<b:container>
-			<b:row>
-				<b:column span="2"/>
-				<b:column span="8">
-					<b:panel title="Your Cart Contents">
-						<h:form id="cartContents">
-							<p:dataTable 
-								value="#{storeBean.cart}" 
-								var="item"
-								rendered="#{storeBean.cartHasItems()}"
-								>
-								<f:facet name="caption" >Cart</f:facet>
-								<p:column>
-									<f:facet name="header">Product</f:facet>
-										#{item.productInfo}
-								</p:column>	
-								<p:column>
-									<f:facet name="header">Unit Price</f:facet>
-									<h:outputText value="#{item.prodprice}">
-										<f:convertNumber type="currency"
-														 currencySymbol="$"/>
-									</h:outputText>
-								</p:column>	
-								<p:column>
-									<f:facet name="header">Quantity</f:facet>
-										#{item.cartCount}
-								</p:column>	
-								<p:column>
-									<f:facet name="header">Sub total</f:facet>
-									<h:outputText value="#{item.calcSub()}">
-										<f:convertNumber type="currency" currencySymbol="$"/>
-									</h:outputText>
-								</p:column>	
-								<p:column>
-									<b:commandButton value="Remove One" ajax="true"  update="cartContents 
-													 cartModalForm sharkQty bookQty jetpackQty cartFooter cartIcon"
-													 action="#{storeBean.removeItem(item)}"
-													 >
-									</b:commandButton>
-								</p:column>	
-
-							</p:dataTable>
-							<div class="center" id="nostuff">
-								<h:outputText rendered="#{storeBean.cartIsEmpty()}" 
-											  value="Your cart is empty! Prepare for the apocalypse!"/>
-							</div>
-						</h:form>
-						<f:facet name="footer">
-
-							<h:form id="cartFooter">
-								<b:row rendered="#{storeBean.cartHasItems()}">
-									<b:column span="2">
-										<b:commandButton style="float:left" ajax="true" 
-														 value="Check Out" onclick="$('#cartModal').modal('show');">
-										</b:commandButton>
-									</b:column>
-									<b:column span="3" offset="7">
-
-										<strong>Cart Total:</strong> 
-										<h:outputText value="#{storeBean.cartTotal}" id="total">
-											<f:convertNumber type="currency" currencySymbol="$"/>
-										</h:outputText>
-									</b:column>
-								</b:row>
-							</h:form>
-						</f:facet>
-					</b:panel>
-				</b:column>
-				<b:column span="2"/>
-			</b:row>
-			<br/>
-		</b:container>
 		<br/>
 		<br/>
 		<br/>
@@ -276,38 +210,60 @@
 			&copy;2015 FourBooksAndAWarmCup
 		</div>
     </h:body>
-    <b:modal id="cartModal" title="Please confirm your order for the following items:">
+    <b:modal id="cartModal" title="Your cart contents">
 		<h:form id="cartModalForm">
-			<h:dataTable class="center eleBorder" rowClasses="evenrows,oddrows" 
-						 captionClass="tableTitle" headerClass="columnTitles" 
-						 columnClasses="title, author, price, quantity"
-						 value="#{storeBean.cart}" var="prod">
-				<h:column>
+			<p:dataTable 
+				value="#{storeBean.cart}" 
+				var="item"
+				rendered="#{storeBean.cartHasItems()}"
+				>
+				<f:facet name="caption" >Cart</f:facet>
+				<p:column>
 					<f:facet name="header">Product</f:facet>
-						#{prod.getProductInfo()}
-				</h:column>
-				<h:column>
+						#{item.productInfo}
+				</p:column>	
+				<p:column>
 					<f:facet name="header">Unit Price</f:facet>
-					<h:outputText value="#{prod.prodprice}">
-						<f:convertNumber type="currency" currencySymbol="$"/>
+					<h:outputText value="#{item.prodprice}">
+						<f:convertNumber type="currency"
+										 currencySymbol="$"/>
 					</h:outputText>
-				</h:column>
-				<h:column>
+				</p:column>	
+				<p:column>
 					<f:facet name="header">Quantity</f:facet>
-						#{prod.getCartCount()}
-				</h:column>
-				<f:facet name="footer" >
-					<h:outputText value ="#{storeBean.cartTotal}" style ="float:right">
+						#{item.cartCount}
+				</p:column>	
+				<p:column>
+					<f:facet name="header">Sub total</f:facet>
+					<h:outputText value="#{item.calcSub()}">
 						<f:convertNumber type="currency" currencySymbol="$"/>
 					</h:outputText>
-					<h:outputText style="float:right; font-weight: bold" value="Total:&nbsp;"/>
-				</f:facet>
-			</h:dataTable>
+				</p:column>	
+				<p:column>
+					<b:commandButton value="Remove One" look="warning" ajax="true"  update="cartButtons
+									 cartModalForm sharkQty bookQty jetpackQty cartFooter cartIcon"
+									 action="#{storeBean.removeItem(item)}"
+									 >
+					</b:commandButton>
+				</p:column>	
+
+			</p:dataTable>
+			<div class="center" id="nostuff">
+				<h:outputText rendered="#{storeBean.cartIsEmpty()}" 
+							  value="Your cart is empty! Prepare for the apocalypse!"/>
+			</div>
+			<div style="float:right">
+
+				<strong>Cart Total:</strong> 
+				<h:outputText value="#{storeBean.cartTotal}" id="total">
+					<f:convertNumber type="currency" currencySymbol="$"/>
+				</h:outputText>
+			</div>
 		</h:form>
 		<f:facet name="footer">
-			<h:form>
-				<b:button value="Cancel" dismiss="modal" look="danger" onclick="return false;"/>
-				<b:commandButton value="Place Order" look ="success" action="#{storeBean.checkOut()}"/>
+			<h:form id="cartButtons">
+				<b:button value="Cancel" dismiss="modal" look="danger" rendered="#{storeBean.cartHasItems()}" onclick="return false;"/>
+				<b:commandButton value="Place Order" look ="success" rendered="#{storeBean.cartHasItems()}" action="#{storeBean.checkOut()}"/>
 			</h:form>
 		</f:facet>
     </b:modal>
@@ -317,7 +273,7 @@
 				$(".active").blur();
 			});
 			$("#cartIcon").off("click");
-			$("#cartIcon a").click(function(event){
+			$("#cartIcon a").click(function (event) {
 				event.preventDefault();
 			});
 			$("#cartIcon").click(function () {
@@ -325,10 +281,10 @@
 				return false;
 			});
 		});
-		$(document).bind("DOMSubtreeModified", function()
+		$(document).bind("DOMSubtreeModified", function ()
 		{
 			$("#cartIcon").off("click");
-			$("#cartIcon a").click(function(event){
+			$("#cartIcon a").click(function (event) {
 				event.preventDefault();
 			});
 			$("#cartIcon").click(function () {
