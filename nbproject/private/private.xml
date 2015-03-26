@@ -3,11 +3,24 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
+            <file>file:/C:/Users/Steve/Dropbox/spring2015/WSP/assignments/termProj/termProject/web/signup.xhtml</file>
             <file>file:/C:/Users/Steve/Dropbox/spring2015/WSP/assignments/termProj/termProject/web/admin/userinfo.xhtml</file>
+            <file>file:/C:/Users/Steve/Dropbox/spring2015/WSP/assignments/termProj/termProject/web/admin/admin.xhtml</file>
+            <file>file:/C:/Users/Steve/Dropbox/spring2015/WSP/assignments/termProj/termProject/web/403.xhtml</file>
+            <file>file:/C:/Users/Steve/Dropbox/spring2015/WSP/assignments/termProj/termProject/web/validateemail.xhtml</file>
+            <file>file:/C:/Users/Steve/Dropbox/spring2015/WSP/assignments/termProj/termProject/src/java/edu/uco/schambers/Entity/Jetpack.java</file>
+            <file>file:/C:/Users/Steve/Dropbox/spring2015/WSP/assignments/termProj/termProject/web/customer/editinfo.xhtml</file>
+            <file>file:/C:/Users/Steve/Dropbox/spring2015/WSP/assignments/termProj/termProject/web/validatesuccess.xhtml</file>
+            <file>file:/C:/Users/Steve/Dropbox/spring2015/WSP/assignments/termProj/termProject/web/customer/customer.xhtml</file>
+            <file>file:/C:/Users/Steve/Dropbox/spring2015/WSP/assignments/termProj/termProject/web/loginError.xhtml</file>
             <file>file:/C:/Users/Steve/Dropbox/spring2015/WSP/assignments/termProj/termProject/web/resources/css/maincss.css</file>
             <file>file:/C:/Users/Steve/Dropbox/spring2015/WSP/assignments/termProj/termProject/src/java/edu/uco/schambers/UserBean.java</file>
-            <file>file:/C:/Users/Steve/Dropbox/spring2015/WSP/assignments/termProj/termProject/web/admin/admin.xhtml</file>
+            <file>file:/C:/Users/Steve/Dropbox/spring2015/WSP/assignments/termProj/termProject/src/java/edu/uco/schambers/Entity/Product.java</file>
+            <file>file:/C:/Users/Steve/Dropbox/spring2015/WSP/assignments/termProj/termProject/web/WEB-INF/web.xml</file>
+            <file>file:/C:/Users/Steve/Dropbox/spring2015/WSP/assignments/termProj/termProject/web/login.xhtml</file>
             <file>file:/C:/Users/Steve/Dropbox/spring2015/WSP/assignments/termProj/termProject/web/index.xhtml</file>
+            <file>file:/C:/Users/Steve/Dropbox/spring2015/WSP/assignments/termProj/termProject/web/logout.xhtml</file>
+            <file>file:/C:/Users/Steve/Dropbox/spring2015/WSP/assignments/termProj/termProject/web/customer/prevorders.xhtml</file>
             <file>file:/C:/Users/Steve/Dropbox/spring2015/WSP/assignments/termProj/termProject/src/java/edu/uco/schambers/StoreBean.java</file>
         </group>
     </open-files>

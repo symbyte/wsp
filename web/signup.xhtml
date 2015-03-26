@@ -12,10 +12,7 @@
     <h:body>
 	<b:navBar brand="My Store Of Awesome" brandHref="#" fixed="yes">
 	    <b:navbarLinks pull="right">
-		<b:dropMenu value="Sign In">
-		    <b:navLink value="Shop" outcome="customer/customer" />
-		    <b:navLink value="Admin" outcome="admin/admin" />
-		</b:dropMenu>
+		    <b:navLink value="Sign up" outcome="/allUsers/loginRedirect" />
 		<b:navLink value="Create Account" outcome="signup"/>
 		<b:navLink value="Logout" outcome="logout" rendered="#{userBean.isLoggedIn()}"/>
 	    </b:navbarLinks>	

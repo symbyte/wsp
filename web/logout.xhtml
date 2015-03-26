@@ -5,34 +5,31 @@
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:b="http://bootsfaces.net/ui">
-		<h:head>
-				<title>Sign In</title>
-				<h:outputStylesheet library="css" name="maincss.css"/>
-		</h:head>
-		<h:body>
-				<f:event type="preRenderView" listener="#{session.invalidate()}"/>
-				<b:navBar brand="My Store Of Awesome" brandHref="#" fixed="yes">
-						<b:navbarLinks pull="right">
-								<b:dropMenu value="Sign In">
-										<b:navLink value="Shop" outcome="customer/customer" />
-										<b:navLink value="Admin" outcome="admin/admin" />
-								</b:dropMenu>
-								<b:navLink value="Create Account" outcome="signup"/>
-						</b:navbarLinks>	
-				</b:navBar>
-				<b:container>
-						<b:row>
-								<b:column span="4" offset="4">
-										<b:alert  severity="success" >You have been logged out successfully</b:alert>
-								</b:column>
-						</b:row>
-				</b:container>
-				<div class="center">
-						<h:link outcome="/index" value="Go to homepage"/>
-				</div>
-				<div id="footer" class="headerFormat foot eleBorder center">
-						&copy;2015 FourBooksAndAWarmCup
-				</div>
-		</h:body>
+	<h:head>
+		<title>Sign In</title>
+		<h:outputStylesheet library="css" name="maincss.css"/>
+	</h:head>
+	<h:body>
+		<f:event type="preRenderView" listener="#{session.invalidate()}"/>
+		<b:navBar brand="My Store Of Awesome" brandHref="#" fixed="yes">
+			<b:navbarLinks pull="right">
+				<b:navLink value="Sign up" outcome="allUsers/loginRedirect" />
+				<b:navLink value="Create Account" outcome="signup"/>
+			</b:navbarLinks>	
+		</b:navBar>
+		<b:container>
+			<b:row>
+				<b:column span="4" offset="4">
+					<b:alert  severity="success" >You have been logged out successfully</b:alert>
+				</b:column>
+			</b:row>
+		</b:container>
+		<div class="center">
+			<h:link outcome="/index" value="Go to homepage"/>
+		</div>
+		<div id="footer" class="headerFormat foot eleBorder center">
+			&copy;2015 FourBooksAndAWarmCup
+		</div>
+	</h:body>
 </html>
 

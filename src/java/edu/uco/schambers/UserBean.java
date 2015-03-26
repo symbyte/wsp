@@ -4,6 +4,7 @@ import edu.uco.schambers.Entity.Grouptable;
 import edu.uco.schambers.Entity.Users;
 import edu.uco.schambers.ejb.GrouptableFacade;
 import edu.uco.schambers.ejb.UsersFacade;
+import java.io.IOException;
 import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -43,7 +44,8 @@ import javax.validation.constraints.Size;
  */
 @Named(value = "userBean")
 @SessionScoped
-public class UserBean implements Serializable {
+public class UserBean implements Serializable
+{
 
 	@Resource(name = "jdbc/prog7")
 	DataSource db;
@@ -71,60 +73,74 @@ public class UserBean implements Serializable {
 	private String emailBeingValidated;
 	private int idOfEmailBeingValidated;
 
-	public String getEmailBeingValidated() {
+	public String getEmailBeingValidated()
+	{
 		return emailBeingValidated;
 	}
 
-	public void setEmailBeingValidated(String emailBeingValidated) {
+	public void setEmailBeingValidated(String emailBeingValidated)
+	{
 		this.emailBeingValidated = emailBeingValidated;
 	}
 
-	public UsersFacade getUsersFacade() {
+	public UsersFacade getUsersFacade()
+	{
 		return usersFacade;
 	}
 
-	public void setUsersFacade(UsersFacade usersFacade) {
+	public void setUsersFacade(UsersFacade usersFacade)
+	{
 		this.usersFacade = usersFacade;
 	}
 
-	public int getIdOfEmailBeingValidated() {
+	public int getIdOfEmailBeingValidated()
+	{
 		return idOfEmailBeingValidated;
 	}
 
-	public void setIdOfEmailBeingValidated(int idOfEmailBeingValidated) {
+	public void setIdOfEmailBeingValidated(int idOfEmailBeingValidated)
+	{
 		this.idOfEmailBeingValidated = idOfEmailBeingValidated;
 	}
 
-	public String getEmailValidationKey() {
+	public String getEmailValidationKey()
+	{
 		return emailValidationKey;
 	}
 
-	public void setEmailValidationKey(String emailValidationKey) {
+	public void setEmailValidationKey(String emailValidationKey)
+	{
 		this.emailValidationKey = emailValidationKey;
 	}
 
 	@PostConstruct
-	public void init() {
+	public void init()
+	{
 		inMemoryUsers = usersFacade.findAll();
-		for (Users u : inMemoryUsers) {
+		for (Users u : inMemoryUsers)
+		{
 			u.setAdmin(checkUserAdmin(u));
 			u.setCust(checkUserCust(u));
 		}
 	}
 
-	public String getUsername() {
+	public String getUsername()
+	{
 		return username;
 	}
 
-	public void setUsername(String username) {
+	public void setUsername(String username)
+	{
 		this.username = username;
 	}
 
-	public String getPassword() {
+	public String getPassword()
+	{
 		return password;
 	}
 
-	public void setPassword(String password) {
+	public void setPassword(String password)
+	{
 		this.password = password;
 	}
 	@Pattern(regexp = ".*@.*[.].*", message = "The address provided is not valid.")
@@ -134,56 +150,66 @@ public class UserBean implements Serializable {
 	@Size(min = 1, message = "You must enter an address")
 	private String address;
 
-	public String getFirstName() {
+	public String getFirstName()
+	{
 		return firstName;
 	}
 
-	public void setFirstName(String firstName) {
+	public void setFirstName(String firstName)
+	{
 		this.firstName = firstName;
 	}
 
-	public String getLastName() {
+	public String getLastName()
+	{
 		return lastName;
 	}
 
-	public void setLastName(String lastName) {
+	public void setLastName(String lastName)
+	{
 		this.lastName = lastName;
 	}
 
-	public String getEmail() {
+	public String getEmail()
+	{
 		return email;
 	}
 
-	public void setEmail(String email) {
+	public void setEmail(String email)
+	{
 		this.email = email;
 	}
 
-	public String getPhoneNum() {
+	public String getPhoneNum()
+	{
 		return phoneNum;
 	}
 
-	public void setPhoneNum(String phoneNum) {
+	public void setPhoneNum(String phoneNum)
+	{
 		this.phoneNum = phoneNum;
 	}
 
-	public String getAddress() {
+	public String getAddress()
+	{
 		return address;
 	}
 
-	public void setAddress(String address) {
+	public void setAddress(String address)
+	{
 		this.address = address;
 	}
 
-	public String signUp() throws SQLException {
-		if(!usernameIsUnique(username))
+	public String signUp() throws SQLException
+	{
+		if (!usernameIsUnique(username))
 		{
 			FacesContext context = FacesContext.getCurrentInstance();
-			FacesMessage fail= new FacesMessage("That username is already in use, please choose a different user name.");
+			FacesMessage fail = new FacesMessage("That username is already in use, please choose a different user name.");
 			fail.setSeverity(FacesMessage.SEVERITY_ERROR);
 			context.addMessage(null, fail);
 			return null;
-		}
-		else
+		} else
 		{
 			this.password = SHA256Encrypt.encrypt(password);
 			Users user = new Users();
@@ -208,43 +234,56 @@ public class UserBean implements Serializable {
 		}
 	}
 
-	public List<Users> getUsers() throws SQLException {
+	public List<Users> getUsers() throws SQLException
+	{
 
 		return inMemoryUsers;
 	}
 
-	public boolean isLoggedIn() {
+	public boolean isLoggedIn()
+	{
 		String currUser;
-		try {
+		try
+		{
 			currUser = FacesContext.getCurrentInstance().getExternalContext().getUserPrincipal().getName();
-		} catch (NullPointerException e) {
+		} catch (NullPointerException e)
+		{
 			return false;
 		}
 		return true;
 	}
 
-	public boolean isCustomer() {
+	public boolean isCustomer()
+	{
 		return false;
 	}
 
-	public boolean anyEditableUsers() {
+	public boolean anyEditableUsers()
+	{
 		boolean found = false;
-		for (Users u : inMemoryUsers) {
-			if (u.isEditable()) {
+		for (Users u : inMemoryUsers)
+		{
+			if (u.isEditable())
+			{
 				found = true;
 			}
 		}
 		return found;
 	}
 
-	public void updateUserDB() {
-		for (Users u : inMemoryUsers) {
-			if (u.isEditable()) {
+	public void updateUserDB()
+	{
+		for (Users u : inMemoryUsers)
+		{
+			if (u.isEditable())
+			{
 				u.setEditable(false);
-				if (u.getPassword().length() < 60) {
+				if (u.getPassword().length() < 60)
+				{
 					u.setPassword(SHA256Encrypt.encrypt(u.getPassword()));
 				}
-				if (isChangingEmail(u)) {
+				if (isChangingEmail(u))
+				{
 					emailBeingValidated = u.getEmail();
 					idOfEmailBeingValidated = u.getId();
 					u.setEmail(usersFacade.find(u.getId()).getEmail());
@@ -254,33 +293,44 @@ public class UserBean implements Serializable {
 							+ " email to validate this address. Please follow the instructions in the email!");
 					context.addMessage(null, validate);
 				}
-				if (u.getId() == null) {
+				if (u.getId() == null)
+				{
 					usersFacade.create(u);
-				} else {
+				} else
+				{
 					usersFacade.edit(u);
 				}
 				List<Grouptable> userGroups = grouptableFacade.findByUser(u);
 				List<String> groupNames = new ArrayList<>();
-				for (Grouptable gt : userGroups) {
+				for (Grouptable gt : userGroups)
+				{
 					groupNames.add(gt.getGroupname());
 				}
-				if (u.isCust() && !checkUserCust(u)) {
+				if (u.isCust() && !checkUserCust(u))
+				{
 					Grouptable g = new Grouptable(u.getUsername(), "customergroup");
 					grouptableFacade.create(g);
-				} else if (!u.isCust() && checkUserCust(u)) {
-					for (Grouptable g : userGroups) {
-						if (g.getGroupname().equals("customergroup")) {
+				} else if (!u.isCust() && checkUserCust(u))
+				{
+					for (Grouptable g : userGroups)
+					{
+						if (g.getGroupname().equals("customergroup"))
+						{
 							grouptableFacade.remove(g);
 						}
 
 					}
 				}
-				if (u.isAdmin() && !checkUserAdmin(u)) {
+				if (u.isAdmin() && !checkUserAdmin(u))
+				{
 					Grouptable g = new Grouptable(u.getUsername(), "admingroup");
 					grouptableFacade.create(g);
-				} else if (!u.isAdmin() && checkUserAdmin(u)) {
-					for (Grouptable g : userGroups) {
-						if (g.getGroupname().equals("admingroup")) {
+				} else if (!u.isAdmin() && checkUserAdmin(u))
+				{
+					for (Grouptable g : userGroups)
+					{
+						if (g.getGroupname().equals("admingroup"))
+						{
 							grouptableFacade.remove(g);
 						}
 
@@ -293,98 +343,125 @@ public class UserBean implements Serializable {
 		context.addMessage(null, success);
 	}
 
-	public void deleteUsers() {
+	public void deleteUsers()
+	{
 		List<Users> usersToRemove = new ArrayList<>();
-		for (Users u : inMemoryUsers) {
-			if (u.isEditable()) {
+		for (Users u : inMemoryUsers)
+		{
+			if (u.isEditable())
+			{
 				usersFacade.remove(u);
 				List<Grouptable> toRemove = grouptableFacade.findByUser(u);
-				for (Grouptable g : toRemove) {
+				for (Grouptable g : toRemove)
+				{
 					grouptableFacade.remove(g);
 				}
 				usersToRemove.add(u);
 			}
 		}
-		for (Users u : usersToRemove) {
+		for (Users u : usersToRemove)
+		{
 			inMemoryUsers.remove(u);
 		}
 
 	}
 
-	public void addUser() {
+	public void addUser()
+	{
 		Users u = new Users();
 		u.setEditable(true);
 		inMemoryUsers.add(u);
 	}
 
-	public boolean checkUserAdmin(Users u) {
+	public boolean checkUserAdmin(Users u)
+	{
 		List<Grouptable> groups = grouptableFacade.findByUser(u);
 		List<String> groupNames = new ArrayList<>();
-		for (Grouptable gt : groups) {
+		for (Grouptable gt : groups)
+		{
 			groupNames.add(gt.getGroupname());
 		}
 		return groupNames.contains("admingroup");
 
 	}
-	public boolean checkUserAdmin() {
+
+	public boolean checkUserAdmin()
+	{
 		List<Grouptable> groups = grouptableFacade.findByUser(currUser);
 		List<String> groupNames = new ArrayList<>();
-		for (Grouptable gt : groups) {
+		for (Grouptable gt : groups)
+		{
 			groupNames.add(gt.getGroupname());
 		}
 		return groupNames.contains("admingroup");
 
 	}
-	public boolean checkUserCust(Users u) {
+
+	public boolean checkUserCust(Users u)
+	{
 
 		List<Grouptable> groups = grouptableFacade.findByUser(u);
 		List<String> groupNames = new ArrayList<>();
-		for (Grouptable gt : groups) {
+		for (Grouptable gt : groups)
+		{
 			groupNames.add(gt.getGroupname());
 		}
 		return groupNames.contains("customergroup");
 	}
-	public boolean checkUserCust() {
+
+	public boolean checkUserCust()
+	{
 
 		List<Grouptable> groups = grouptableFacade.findByUser(currUser);
 		List<String> groupNames = new ArrayList<>();
-		for (Grouptable gt : groups) {
+		for (Grouptable gt : groups)
+		{
 			groupNames.add(gt.getGroupname());
 		}
 		return groupNames.contains("customergroup");
 	}
-	public void setCurrentUser() {
+
+	public void setCurrentUser()
+	{
 		String username = FacesContext.getCurrentInstance().getExternalContext().getUserPrincipal().getName();
-		for (Users u : inMemoryUsers) {
-			if (u.getUsername().equals(username)) {
+		for (Users u : inMemoryUsers)
+		{
+			if (u.getUsername().equals(username))
+			{
 				currUser = u;
 			}
 		}
 
 	}
 
-	public Users getCurrUser() {
+	public Users getCurrUser()
+	{
 		return currUser;
 	}
 
-	public void setCurrUser(Users currUser) {
+	public void setCurrUser(Users currUser)
+	{
 		this.currUser = currUser;
 	}
 
-	public boolean isChangingEmail(Users u) {
+	public boolean isChangingEmail(Users u)
+	{
 		List<Users> userResults = usersFacade.findByUsername(u.getUsername());
-		if (userResults.isEmpty()) {
+		if (userResults.isEmpty())
+		{
 			//user not found
-		} else {
+		} else
+		{
 			return !(u.getEmail().equals(userResults.get(0).getEmail()));
 		}
 		return false;
 	}
 
-	public void sendEmailValidationLink() {
-		String key= UUID.randomUUID().toString();
+	public void sendEmailValidationLink()
+	{
+		String key = UUID.randomUUID().toString();
 		emailValidationKey = key;
-		
+
 		final String username = "awesomestoretest@gmail.com";
 		final String password = "t3st34man";
 
@@ -396,12 +473,15 @@ public class UserBean implements Serializable {
 		String body = ("Please click this link to validate your email address: \n"
 				+ "http://localhost:8080/termProject/faces/validateemail.xhtml?key=" + key);
 		Session mailSession = Session.getInstance(props,
-				new javax.mail.Authenticator() {
-					protected PasswordAuthentication getPasswordAuthentication() {
+				new javax.mail.Authenticator()
+				{
+					protected PasswordAuthentication getPasswordAuthentication()
+					{
 						return new PasswordAuthentication(username, password);
 					}
 				});
-		try {
+		try
+		{
 			String recip = emailBeingValidated;
 			Message message = new MimeMessage(mailSession);
 			message.setFrom(new InternetAddress("awesomestore@gmail.com"));
@@ -414,29 +494,57 @@ public class UserBean implements Serializable {
 
 			System.out.println("Done");
 
-		} catch (MessagingException e) {
+		} catch (MessagingException e)
+		{
 			throw new RuntimeException(e);
 		}
 	}
+
 	public void setCurrUserEditable()
 	{
-		 inMemoryUsers.get(inMemoryUsers.indexOf(currUser)).setEditable(true);
+		inMemoryUsers.get(inMemoryUsers.indexOf(currUser)).setEditable(true);
 	}
+
 	public void updateCurrUserInfo()
 	{
-		
+
 	}
+
 	public boolean usernameIsUnique(String uname)
 	{
 		boolean isUnique = true;
-		for(Users m: inMemoryUsers)	
+		for (Users m : inMemoryUsers)
 		{
-			if(m.getUsername().equalsIgnoreCase(uname))
+			if (m.getUsername().equalsIgnoreCase(uname))
 			{
-				isUnique=false;
+				isUnique = false;
 			}
 		}
 		return isUnique;
+	}
+
+	public void redirectByUserType()
+	{
+		FacesContext context = FacesContext.getCurrentInstance();
+		if (checkUserAdmin())
+		{
+			try
+			{
+				FacesContext.getCurrentInstance().getExternalContext().redirect("../admin/admin.xhtml");
+			} catch (IOException e)
+			{
+				//oh no!
+			}
+		} else
+		{
+			try
+			{
+				FacesContext.getCurrentInstance().getExternalContext().redirect("../customer/customer.xhtml");
+			} catch (IOException e)
+			{
+				//oh no!
+			}
+		}
 	}
 
 }

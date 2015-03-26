@@ -6,68 +6,65 @@
       xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:p="http://primefaces.org/ui">
     <h:head>
-	<title>Sign In</title>
-	<h:outputStylesheet library="css" name="maincss.css"/>
+		<title>Sign In</title>
+		<h:outputStylesheet library="css" name="maincss.css"/>
     </h:head>
     <h:body>
-	<b:navBar brand="My Store Of Awesome" brandHref="#" fixed="yes">
-	    <b:navbarLinks pull="right">
-		<b:dropMenu value="Sign In">
-		    <b:navLink value="Shop" outcome="customer/customer" />
-		    <b:navLink value="Admin" outcome="admin/admin" />
-		</b:dropMenu>
-		<b:navLink value="Create Account" outcome="signup"/>
-		<b:navLink value="Logout" outcome="logout" rendered="#{userBean.isLoggedIn()}"/>
-	    </b:navbarLinks>	
-	</b:navBar>
-	<b:container>
-	    <b:row>
-		<b:column span="4"/>
-		<b:column span ="4">
-		<b:alert severity="danger">Login failed. Please try again.</b:alert>
-		</b:column>
-		<b:column span="4"/>
-	    </b:row>
-	</b:container>
+		<b:navBar brand="My Store Of Awesome" brandHref="#" fixed="yes">
+			<b:navbarLinks pull="right">
+				<b:navLink value="Sign up" outcome="/allUsers/loginRedirect" />
+				<b:navLink value="Create Account" outcome="signup"/>
+				<b:navLink value="Logout" outcome="logout" rendered="#{userBean.isLoggedIn()}"/>
+			</b:navbarLinks>	
+		</b:navBar>
+		<b:container>
+			<b:row>
+				<b:column span="4"/>
+				<b:column span ="4">
+					<b:alert severity="danger">Login failed. Please try again.</b:alert>
+				</b:column>
+				<b:column span="4"/>
+			</b:row>
+		</b:container>
 
 
-	<b:container>
-	    <b:row>
-		<h:form id="login" onsubmit="action = 'j_security_check';" prependId="false">
-		    <b:row>
-			<b:column span="4"/>
-			<b:column span="4">
-			    <b:well>
-				<b:row>
-				    <b:column span="2"/>
-				    <b:column span="8">
-					<b:inputText label="Username: " id="j_username" />
-				    </b:column>
-				    <b:column span="2"/>
-				</b:row>
-				<b:row>
-				    <b:column span="2"/>
-				    <b:column span="8">
-					<b:inputSecret label="Password: " id="j_password"/>
-				    </b:column>
-				    <b:column span="2"/>
-				</b:row>
-				<b:row>
-				    <b:column span="9"/>
-				    <b:column span="3">
-					<b:commandButton  action="submit" value="Sign In" ajax="false"/>
-				    </b:column>
-				</b:row>
-			    </b:well>
-			</b:column>
-			<b:column span="4"/>
-		    </b:row>
-		</h:form>
-	    </b:row>
-	</b:container>
-	<div id="footer" class="headerFormat foot eleBorder center">
-	    &copy;2015 FourBooksAndAWarmCup
-	</div>
+		<b:container>
+			<b:row>
+				<h:form id="login" onsubmit="action = 'j_security_check';" prependId="false">
+					<b:row>
+						<b:column span="4"/>
+						<b:column span="4">
+							<b:well>
+								<b:row>
+									<b:column span="2"/>
+									<b:column span="8">
+										<b:inputText label="Username: " id="j_username" />
+									</b:column>
+									<b:column span="2"/>
+								</b:row>
+								<b:row>
+									<b:column span="2"/>
+									<b:column span="8">
+										<b:inputSecret label="Password: " id="j_password"/>
+									</b:column>
+									<b:column span="2"/>
+								</b:row>
+								<b:row>
+									<b:column span="9"/>
+									<b:column span="3">
+										<b:commandButton  action="submit" value="Sign In" ajax="false"/>
+									</b:column>
+								</b:row>
+							</b:well>
+						</b:column>
+						<b:column span="4"/>
+					</b:row>
+				</h:form>
+			</b:row>
+		</b:container>
+		<div id="footer" class="headerFormat foot eleBorder center">
+			&copy;2015 FourBooksAndAWarmCup
+		</div>
     </h:body>
 </html>
 
