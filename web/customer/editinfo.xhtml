@@ -6,57 +6,141 @@
       xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:p="http://primefaces.org/ui">
     <h:head>
-	<title>Change your account info</title>
-	<h:outputStylesheet library="css" name="maincss.css"/>
+		<title>Change your account info</title>
+		<h:outputStylesheet library="css" name="maincss.css"/>
     </h:head>
     <h:body>
-	#{userBean.init()}
-	#{userBean.setCurrentUser()}
-	#{userBean.setCurrUserEditable()}
-	<b:navBar brand="My Store Of Awesome" brandHref="#" fixed="yes">
-	    <b:navbarLinks pull="right">
-		<b:navLink value="Shop" outcome="/customer/customer" rendered="#{userBean.checkUserCust()}" />
-		<b:navLink value="Previous Orders" outcome="/customer/prevorders" rendered="#{userBean.checkUserCust()}"/>
-		<b:navLink value="Admin" outcome="/admin/admin" rendered="#{userBean.checkUserAdmin()}"/>
-		<b:navLink value="Logout" outcome="/logout" rendered="#{userBean.isLoggedIn()}"/>
-	    </b:navbarLinks>	
-	</b:navBar>
-	<b:container>
-	    <b:row>
-		<b:column span="6" offset="3">
-		    <h:messages  infoClass="facesAlertSuccess" globalOnly="true"/>
-		</b:column>
-	    </b:row>
-	    <b:row>
+		#{userBean.init()}
+		#{userBean.setCurrentUser()}
+		#{userBean.setCurrUserEditable()}
+		<b:navBar brand="My Store Of Awesome" brandHref="#" fixed="yes">
+			<b:navbarLinks pull="right">
+				<b:navLink icon="shopping-cart" value="#{storeBean.numItemsInCart()}"  id="cartIcon" />
+				<b:navLink value="Shop" outcome="/customer/customer" rendered="#{userBean.checkUserCust()}" />
+				<b:navLink value="Previous Orders" outcome="/customer/prevorders" rendered="#{userBean.checkUserCust()}"/>
+				<b:navLink value="Admin" outcome="/admin/admin" rendered="#{userBean.checkUserAdmin()}"/>
+				<b:navLink value="Logout" outcome="/logout" rendered="#{userBean.isLoggedIn()}"/>
+			</b:navbarLinks>	
+		</b:navBar>
+		<b:container>
+			<b:row>
+				<b:column span="6" offset="3">
+					<h:messages  infoClass="facesAlertSuccess" globalOnly="true"/>
+				</b:column>
+			</b:row>
+			<b:row>
 
-		<b:column span="6" offset="3">
-		    <h:form>
+				<b:column span="6" offset="3">
+					<h:form>
 
-			<b:panelGrid colSpans="6,6" class="eleBorder signIn">
-			    <b:inputText id="username" label="Username: " disabled="true" value="#{userBean.currUser.username}"/>
-			    <h:message for="username" errorStyle="color:red" infoStyle="color:green"/>
-			    <b:inputText id="firstName" label="First Name: " value="#{userBean.currUser.firstname}"/>
-			    <h:message for="firstName" errorStyle="color:red" infoStyle="color:green"/>
-			    <b:inputText id="lastName" label="Last Name: " value="#{userBean.currUser.lastname}"/>
-			    <h:message for="lastName" errorStyle="color:red" infoStyle="color:green"/>
-			    <b:inputSecret id="password" label="Password: " value="#{userBean.currUser.password}"/>
-			    <h:message for="password" errorStyle="color:red" infoStyle="color:green"/>
-			    <b:inputText id="email" label="Email: " value="#{userBean.currUser.email}"/>
-			    <h:message for="email" errorStyle="color:red" infoStyle="color:green"/>
-			    <b:inputText id="phoneNum" label="Phone Number: " value="#{userBean.currUser.phonenum}"/>
-			    <h:message for="phoneNum" errorStyle="color:red" infoStyle="color:green"/>
-			    <b:inputText id="address" label="Address: " value="#{userBean.currUser.address}"/>
-			    <h:message for="address" errorStyle="color:red" infoStyle="color:green"/>
-			    <h:panelGroup/>
-			    <b:commandButton value="Update Information"  action="#{userBean.updateUserDB()}"/>
-			</b:panelGrid>
-		    </h:form>
-		</b:column>
-	    </b:row>
-	</b:container>
-	<div id="footer" class="headerFormat foot eleBorder center">
-	    &copy;2015 FourBooksAndAWarmCup
-	</div>
+						<b:panelGrid colSpans="6,6" class="eleBorder signIn">
+							<b:inputText id="username" label="Username: " disabled="true" value="#{userBean.currUser.username}"/>
+							<h:message for="username" errorStyle="color:red" infoStyle="color:green"/>
+							<b:inputText id="firstName" label="First Name: " value="#{userBean.currUser.firstname}"/>
+							<h:message for="firstName" errorStyle="color:red" infoStyle="color:green"/>
+							<b:inputText id="lastName" label="Last Name: " value="#{userBean.currUser.lastname}"/>
+							<h:message for="lastName" errorStyle="color:red" infoStyle="color:green"/>
+							<b:inputSecret id="password" label="Password: " value="#{userBean.currUser.password}"/>
+							<h:message for="password" errorStyle="color:red" infoStyle="color:green"/>
+							<b:inputText id="email" label="Email: " value="#{userBean.currUser.email}"/>
+							<h:message for="email" errorStyle="color:red" infoStyle="color:green"/>
+							<b:inputText id="phoneNum" label="Phone Number: " value="#{userBean.currUser.phonenum}"/>
+							<h:message for="phoneNum" errorStyle="color:red" infoStyle="color:green"/>
+							<b:inputText id="address" label="Address: " value="#{userBean.currUser.address}"/>
+							<h:message for="address" errorStyle="color:red" infoStyle="color:green"/>
+							<h:panelGroup/>
+							<b:commandButton value="Update Information"  action="#{userBean.updateUserDB()}"/>
+						</b:panelGrid>
+					</h:form>
+				</b:column>
+			</b:row>
+		</b:container>
+		<div id="footer" class="headerFormat foot eleBorder center">
+			&copy;2015 FourBooksAndAWarmCup
+		</div>
+		<b:modal id="cartModal" title="Your cart contents">
+			<h:form id="cartModalForm">
+				<p:dataTable 
+					value="#{storeBean.cart}" 
+					var="item"
+					rendered="#{storeBean.cartHasItems()}"
+					>
+					<f:facet name="caption" >Cart</f:facet>
+					<p:column>
+						<f:facet name="header">Product</f:facet>
+							#{item.productInfo}
+					</p:column>	
+					<p:column>
+						<f:facet name="header">Unit Price</f:facet>
+						<h:outputText value="#{item.prodprice}">
+							<f:convertNumber type="currency"
+											 currencySymbol="$"/>
+						</h:outputText>
+					</p:column>	
+					<p:column>
+						<f:facet name="header">Quantity</f:facet>
+							#{item.cartCount}
+					</p:column>	
+					<p:column>
+						<f:facet name="header">Sub total</f:facet>
+						<h:outputText value="#{item.calcSub()}">
+							<f:convertNumber type="currency" currencySymbol="$"/>
+						</h:outputText>
+					</p:column>	
+					<p:column>
+						<b:commandButton value="Remove One" look="warning" ajax="true"  update="cartButtons
+										 cartModalForm sharkQty bookQty jetpackQty cartFooter cartIcon"
+										 action="#{storeBean.removeItem(item)}"
+										 >
+						</b:commandButton>
+					</p:column>	
+
+				</p:dataTable>
+				<div class="center" id="nostuff">
+					<h:outputText rendered="#{storeBean.cartIsEmpty()}" 
+								  value="Your cart is empty! Prepare for the apocalypse!"/>
+				</div>
+				<div style="float:right">
+
+					<strong>Cart Total:</strong> 
+					<h:outputText value="#{storeBean.cartTotal}" id="total">
+						<f:convertNumber type="currency" currencySymbol="$"/>
+					</h:outputText>
+				</div>
+			</h:form>
+			<f:facet name="footer">
+				<h:form id="cartButtons">
+					<b:button value="Cancel" dismiss="modal" look="danger" rendered="#{storeBean.cartHasItems()}" onclick="return false;"/>
+					<b:commandButton value="Place Order" look ="success" rendered="#{storeBean.cartHasItems()}" action="#{storeBean.checkOut()}"/>
+				</h:form>
+			</f:facet>
+		</b:modal>
     </h:body>
+    <script type="text/javascript">
+		$(document).ready(function () {
+			$(".active").click(function () {
+				$(".active").blur();
+			});
+			$("#cartIcon").off("click");
+			$("#cartIcon a").click(function (event) {
+				event.preventDefault();
+			});
+			$("#cartIcon").click(function () {
+				$("#cartModal").modal('show');
+				return false;
+			});
+		});
+		$(document).bind("DOMSubtreeModified", function ()
+		{
+			$("#cartIcon").off("click");
+			$("#cartIcon a").click(function (event) {
+				event.preventDefault();
+			});
+			$("#cartIcon").click(function () {
+				$("#cartModal").modal('show');
+				return false;
+			});
+		});
+    </script>
 </html>
 

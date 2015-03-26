@@ -1,85 +1,168 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-      xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:b="http://bootsfaces.net/ui"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:p="http://primefaces.org/ui">
     <h:head>
-	<title>Previous Orders</title>
-	<h:outputStylesheet library="css" name="maincss.css"/>
+		<title>Previous Orders</title>
+		<h:outputStylesheet library="css" name="maincss.css"/>
     </h:head>
     <h:body>
-	#{storeBean.getOrdersFromDB()}
-	<b:navBar brand="My Store Of Awesome" brandHref="/prog7/faces/customer/customer.xhtml" fixed="top">
-	    <b:navbarLinks pull="right">
-		<b:navLink value="Shop" outcome="/customer/customer" rendered="#{userBean.checkUserCust()}" />
-		<b:navLink value="Edit Information" outcome="/customer/editinfo" rendered="#{userBean.checkUserCust()}"/>
-		<b:navLink value="Admin" outcome="/admin/admin" rendered="#{userBean.checkUserAdmin()}"/>
-		<b:navLink value="Logout" outcome="/logout" rendered="#{userBean.isLoggedIn()}"/>
-	    </b:navbarLinks>	
-	</b:navBar>
-	<br/>
-	<br/>
-	<br/>
-	<h:form>
-	    <b:container>
-		<b:row>
-		    <b:column class="pageClass" span="8" offset="2">
+		#{storeBean.getOrdersFromDB()}
+		<b:navBar brand="My Store Of Awesome" brandHref="/prog7/faces/customer/customer.xhtml" fixed="top">
+			<b:navbarLinks pull="right">
+				<b:navLink icon="shopping-cart" value="#{storeBean.numItemsInCart()}"  id="cartIcon" />
+				<b:navLink value="Shop" outcome="/customer/customer" rendered="#{userBean.checkUserCust()}" />
+				<b:navLink value="Edit Information" outcome="/customer/editinfo" rendered="#{userBean.checkUserCust()}"/>
+				<b:navLink value="Admin" outcome="/admin/admin" rendered="#{userBean.checkUserAdmin()}"/>
+				<b:navLink value="Logout" outcome="/logout" rendered="#{userBean.isLoggedIn()}"/>
+			</b:navbarLinks>	
+		</b:navBar>
+		<br/>
+		<br/>
+		<br/>
+		<b:container>
+			<b:row>
+				<b:column class="pageClass" span="8" offset="2">
 
-					<p:dataTable value="#{storeBean.getOrders(null)}"  tableStyleClass="borderless" var="order" 
-								 rows="5" paginator="true" paginatorAlwaysVisible="false" lazy="true">
-			    <p:column>
-				<h:dataTable class="center eleBorder" rowClasses="evenrows,oddrows" 
-					     captionClass="tableTitle" headerClass="columnTitles" 
-					     columnClasses="title, author, price, quantity"
-					     value="#{order.products}" var="prod">
-				    <f:facet name="caption">Order # #{order.id}
-					<h:outputText value="#{storeBean.millisToDate(order.orderDate)}" style="float:right"/>
-					<h:outputText style="float:right" value="Date Placed:&nbsp;"/> 
-				    </f:facet>
-				    <h:column>
-					<f:facet name="header">Product</f:facet>
-					    #{prod.getProductInfo()}
-				    </h:column>
-				    <h:column>
-					<f:facet name="header">Unit Price</f:facet>
-					<h:outputText value="#{prod.prodprice}">
-					    <f:convertNumber type="currency" currencySymbol="$"/>
-					</h:outputText>
-				    </h:column>
-				    <h:column>
-					<f:facet name="header">Quantity</f:facet>
-					    #{prod.getCartCount()}
-				    </h:column>
-				    <f:facet name="footer" >
-					<h:outputText value ="#{order.total}" style ="float:right">
-					    <f:convertNumber type="currency" currencySymbol="$"/>
-					</h:outputText>
-					<h:outputText style="float:right; font-weight: bold" value="Total:&nbsp;"/>
-				    </f:facet>
-				</h:dataTable>
-				<br/>
-			    </p:column>
-			</p:dataTable>
+					<h:form>
+						<p:dataTable value="#{storeBean.getOrders(null)}"  tableStyleClass="borderless" var="order" 
+									 rows="5" paginator="true" paginatorAlwaysVisible="false" lazy="true">
+							<p:column>
+								<h:dataTable class="center eleBorder" rowClasses="evenrows,oddrows" 
+											 captionClass="tableTitle" headerClass="columnTitles" 
+											 columnClasses="title, author, price, quantity"
+											 value="#{order.products}" var="prod">
+									<f:facet name="caption">Order # #{order.id}
+										<h:outputText value="#{storeBean.millisToDate(order.orderDate)}" style="float:right"/>
+										<h:outputText style="float:right" value="Date Placed:&nbsp;"/> 
+									</f:facet>
+									<h:column>
+										<f:facet name="header">Product</f:facet>
+											#{prod.getProductInfo()}
+									</h:column>
+									<h:column>
+										<f:facet name="header">Unit Price</f:facet>
+										<h:outputText value="#{prod.prodprice}">
+											<f:convertNumber type="currency" currencySymbol="$"/>
+										</h:outputText>
+									</h:column>
+									<h:column>
+										<f:facet name="header">Quantity</f:facet>
+											#{prod.getCartCount()}
+									</h:column>
+									<f:facet name="footer" >
+										<h:outputText value ="#{order.total}" style ="float:right">
+											<f:convertNumber type="currency" currencySymbol="$"/>
+										</h:outputText>
+										<h:outputText style="float:right; font-weight: bold" value="Total:&nbsp;"/>
+									</f:facet>
+								</h:dataTable>
+								<br/>
+							</p:column>
+						</p:dataTable>
 
-		    </b:column>
-		</b:row>
-	    </b:container>
-	</h:form>
-	<br/>
-	<br/>
-	<div id="footer" class="headerFormat foot eleBorder center">
-	    &copy;2015 FourBooksAndAWarmCup
-	</div>
+					</h:form>
+				</b:column>
+			</b:row>
+		</b:container>
+		<br/>
+		<br/>
+		<div id="footer" class="headerFormat foot eleBorder center">
+			&copy;2015 FourBooksAndAWarmCup
+		</div>
+
+		<b:modal id="cartModal" title="Your cart contents">
+			<h:form id="cartModalForm">
+				<p:dataTable 
+					value="#{storeBean.cart}" 
+					var="item"
+					rendered="#{storeBean.cartHasItems()}"
+					>
+					<f:facet name="caption" >Cart</f:facet>
+					<p:column>
+						<f:facet name="header">Product</f:facet>
+							#{item.productInfo}
+					</p:column>	
+					<p:column>
+						<f:facet name="header">Unit Price</f:facet>
+						<h:outputText value="#{item.prodprice}">
+							<f:convertNumber type="currency"
+											 currencySymbol="$"/>
+						</h:outputText>
+					</p:column>	
+					<p:column>
+						<f:facet name="header">Quantity</f:facet>
+							#{item.cartCount}
+					</p:column>	
+					<p:column>
+						<f:facet name="header">Sub total</f:facet>
+						<h:outputText value="#{item.calcSub()}">
+							<f:convertNumber type="currency" currencySymbol="$"/>
+						</h:outputText>
+					</p:column>	
+					<p:column>
+						<b:commandButton value="Remove One" look="warning" ajax="true"  update="cartButtons
+										 cartModalForm sharkQty bookQty jetpackQty cartFooter cartIcon"
+										 action="#{storeBean.removeItem(item)}"
+										 >
+						</b:commandButton>
+					</p:column>	
+
+				</p:dataTable>
+				<div class="center" id="nostuff">
+					<h:outputText rendered="#{storeBean.cartIsEmpty()}" 
+								  value="Your cart is empty! Prepare for the apocalypse!"/>
+				</div>
+				<div style="float:right">
+
+					<strong>Cart Total:</strong> 
+					<h:outputText value="#{storeBean.cartTotal}" id="total">
+						<f:convertNumber type="currency" currencySymbol="$"/>
+					</h:outputText>
+				</div>
+			</h:form>
+			<f:facet name="footer">
+				<h:form id="cartButtons">
+					<b:button value="Cancel" dismiss="modal" look="danger" rendered="#{storeBean.cartHasItems()}" onclick="return false;"/>
+					<b:commandButton value="Place Order" look ="success" rendered="#{storeBean.cartHasItems()}" action="#{storeBean.checkOut()}"/>
+				</h:form>
+			</f:facet>
+		</b:modal>
+				<b:tabView>
+
+
+
+					</b:tabView>
     </h:body>
-    <script>
-            $(document).ready(function () {
-                $('tr').removeClass("ui-datatable-even ui-datatable-odd ui-widget-content");
-                $('td').removeAttr('role');
-                $('table').removeAttr('role');
-            });
+
+    <script type="text/javascript">
+		$(document).ready(function () {
+			$(".active").click(function () {
+				$(".active").blur();
+			});
+			$("#cartIcon").off("click");
+			$("#cartIcon a").click(function (event) {
+				event.preventDefault();
+			});
+			$("#cartIcon").click(function () {
+				$("#cartModal").modal('show');
+				return false;
+			});
+		});
+		$(document).bind("DOMSubtreeModified", function ()
+		{
+			$("#cartIcon").off("click");
+			$("#cartIcon a").click(function (event) {
+				event.preventDefault();
+			});
+			$("#cartIcon").click(function () {
+				$("#cartModal").modal('show');
+				return false;
+			});
+		});
     </script>
 </html>
 

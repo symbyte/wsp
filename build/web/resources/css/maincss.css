@@ -26,7 +26,6 @@ td
 }
 .tableTitle
 {
-	font-size: 16px;
 	border: 1px #cecece solid;
 	border-radius: 5px;
 	color: lightslategray;
@@ -176,4 +175,7 @@ div#nostuff
 .modal .modal-body {
     max-height: 600px;
     overflow-y: auto;
+}
+.ui-datatable table {
+  table-layout: auto !important;
 }
