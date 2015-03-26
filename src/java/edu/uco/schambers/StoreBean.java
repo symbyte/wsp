@@ -127,6 +127,15 @@ public class StoreBean implements Serializable {
 		}
 		return cartTotal;
 	}
+	public int numItemsInCart()
+	{
+		int cartItemTotal = 0;
+		for(Product item: cart)
+		{
+			cartItemTotal += item.getCartCount();
+		}
+		return cartItemTotal;
+	}
 
 	public void getProductListFromDB() {
 		this.bookList = bookFacade.findAll();
