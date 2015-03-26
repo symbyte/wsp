@@ -316,6 +316,25 @@
 			$(".active").click(function () {
 				$(".active").blur();
 			});
+			$("#cartIcon").off("click");
+			$("#cartIcon a").click(function(event){
+				event.preventDefault();
+			});
+			$("#cartIcon").click(function () {
+				$("#cartModal").modal('show');
+				return false;
+			});
+		});
+		$(document).bind("DOMSubtreeModified", function()
+		{
+			$("#cartIcon").off("click");
+			$("#cartIcon a").click(function(event){
+				event.preventDefault();
+			});
+			$("#cartIcon").click(function () {
+				$("#cartModal").modal('show');
+				return false;
+			});
 		});
     </script>
 
