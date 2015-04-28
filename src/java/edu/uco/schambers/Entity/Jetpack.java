@@ -27,47 +27,56 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Table(name = "JETPACK")
 @DiscriminatorValue("J")
 @XmlRootElement
-@NamedQueries({
+@NamedQueries(
+{
 	@NamedQuery(name = "Jetpack.findAll", query = "SELECT j FROM Jetpack j"),
 	@NamedQuery(name = "Jetpack.findByProdid", query = "SELECT j FROM Jetpack j WHERE j.prodid = :prodid"),
 	@NamedQuery(name = "Jetpack.findByFuel", query = "SELECT j FROM Jetpack j WHERE j.fuel = :fuel"),
-	@NamedQuery(name = "Jetpack.findByEnginesize", query = "SELECT j FROM Jetpack j WHERE j.enginesize = :enginesize")})
-public class Jetpack extends Product implements Serializable {
+	@NamedQuery(name = "Jetpack.findByEnginesize", query = "SELECT j FROM Jetpack j WHERE j.enginesize = :enginesize")
+})
+public class Jetpack extends Product implements Serializable
+{
+
 	private static final long serialVersionUID = 1L;
 	@Size(max = 255)
-        @Column(name = "FUEL")
+	@Column(name = "FUEL")
 	private String fuel;
 	@Size(max = 255)
-        @Column(name = "ENGINESIZE")
+	@Column(name = "ENGINESIZE")
 	private String enginesize;
 
-	public Jetpack() {
+	public Jetpack()
+	{
 	}
 
-	public Jetpack(Integer prodid) {
+	public Jetpack(Integer prodid)
+	{
 		super(prodid);
 	}
 
-
-	public String getFuel() {
+	public String getFuel()
+	{
 		return fuel;
 	}
 
-	public void setFuel(String fuel) {
+	public void setFuel(String fuel)
+	{
 		this.fuel = fuel;
 	}
 
-	public String getEnginesize() {
+	public String getEnginesize()
+	{
 		return enginesize;
 	}
 
-	public void setEnginesize(String enginesize) {
+	public void setEnginesize(String enginesize)
+	{
 		this.enginesize = enginesize;
 	}
 
 	public String getProductInfo()
 	{
-		return this.getProdname() + " Jetpack, " + this.enginesize + " " +this.fuel + " engine";
+		return this.getProdname() + " Jetpack, " + this.enginesize + " " + this.fuel + " engine";
 	}
-	
+
 }

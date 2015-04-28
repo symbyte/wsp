@@ -11,7 +11,6 @@
         <Node id="logout.xhtml" x="150" y="600" zoom="true"/>
         <Node id="loginError.xhtml" x="650" y="150" zoom="true"/>
         <Node id="admin/userinfo.xhtml" x="400" y="150" zoom="true"/>
-        <Node id="prevorders.xhtml" x="150" y="150" zoom="true"/>
         <Node id="403.xhtml" x="400" y="300" zoom="true"/>
     </Scope>
     <Scope Scope="All Faces Configurations"/>

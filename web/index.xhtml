@@ -10,7 +10,7 @@
 		<h:outputStylesheet library="css" name="maincss.css"/>
 	</h:head>
 	<h:body>
-		<b:navBar brand="My Store Of Awesome" brandHref="#" fixed="yes">
+		<b:navBar brand="My Store Of Awesome" brandHref="#" fixed="top">
 			<b:navbarLinks pull="right">
 				<b:navLink value="Sign In" outcome="/allUsers/loginRedirect" />
 				<b:navLink value="Create Account" outcome="signup"/>
@@ -18,6 +18,10 @@
 			</b:navbarLinks>	
 		</b:navBar>
 
+		<br/>
+		<br/>
+		<br/>
+		<br/>
 		<br/>
 		<br/>
 		<b:container>
@@ -32,7 +36,7 @@
 					<h:form>
 						<b:tabView>
 							<b:tab title ="Books">
-								<p:dataTable id="prodTable" paginator="true" rows="5" paginatorPosition="bottom" 
+								<p:dataTable id="prodTable" paginator="true" rows="3" paginatorPosition="bottom" 
 											 value="#{storeBean.bookList}" 
 											 paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} 
 											 {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
@@ -70,7 +74,7 @@
 								</p:dataTable>
 							</b:tab>
 							<b:tab title="Jetpacks">
-								<p:dataTable id="jetpackTable" paginator="true" rows="5" paginatorPosition="bottom" 
+								<p:dataTable id="jetpackTable" paginator="true" rows="3" paginatorPosition="bottom" 
 											 value="#{storeBean.jetpackList}" 
 											 paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} 
 											 {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
@@ -109,7 +113,7 @@
 								</p:dataTable>
 							</b:tab>
 							<b:tab title="Shark Repellent">
-								<p:dataTable id="sharkTable" paginator="true" rows="5" paginatorPosition="bottom" 
+								<p:dataTable id="sharkTable" paginator="true" rows="3" paginatorPosition="bottom" 
 											 value="#{storeBean.sharkList}" 
 											 paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} 
 											 {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"

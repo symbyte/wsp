@@ -13,7 +13,7 @@
 		#{userBean.init()}
 		#{userBean.setCurrentUser()}
 		#{userBean.setCurrUserEditable()}
-		<b:navBar brand="My Store Of Awesome" brandHref="#" fixed="yes">
+		<b:navBar brand="My Store Of Awesome" brandHref="#" fixed="top">
 			<b:navbarLinks pull="right">
 				<b:navLink icon="shopping-cart" value="#{storeBean.numItemsInCart()}"  id="cartIcon" />
 				<b:navLink value="Shop" outcome="/customer/customer" rendered="#{userBean.checkUserCust()}" />
@@ -22,6 +22,10 @@
 				<b:navLink value="Logout" outcome="/logout" rendered="#{userBean.isLoggedIn()}"/>
 			</b:navbarLinks>	
 		</b:navBar>
+		<br/>
+		<br/>
+		<br/>
+		<br/>
 		<b:container>
 			<b:row>
 				<b:column span="6" offset="3">

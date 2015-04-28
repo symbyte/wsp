@@ -12,13 +12,17 @@
     </h:head>
     <h:body>
 	#{userBean.setCurrentUser()}
-	<b:navBar brand="My Store Of Awesome" brandHref="#" fixed="yes">
+	<b:navBar brand="My Store Of Awesome" brandHref="#" fixed="top">
 	    <b:navbarLinks pull="right">
 		<b:navLink value="Shop" outcome="/customer/customer" rendered="#{userBean.checkUserCust()}" />
 		<b:navLink value="Manage Users" outcome="userinfo"/>
 		<b:navLink value="Logout" outcome="/logout" rendered="#{userBean.isLoggedIn()}"/>
 	    </b:navbarLinks>	
 	</b:navBar>
+	<br/>
+	<br/>
+	<br/>
+	<br/>
 	<br/>
 	<br/>
 	#{userBean.setCurrentUser()}
@@ -30,7 +34,7 @@
 			<b:tabView>
 			    <b:tab  title="Books">
 
-				<p:dataTable  paginator="true" rows="5" 
+				<p:dataTable  paginator="true" rows="3" 
 					      paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} 
 					      {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}" 
 					      value="#{storeBean.bookList}" 
@@ -116,7 +120,7 @@
 				</p:dataTable>
 			    </b:tab>
 			    <b:tab title="Jetpacks">
-				<p:dataTable  paginator="true" rows="5" 
+				<p:dataTable  paginator="true" rows="3" 
 					      paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} 
 					      {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}" 
 					      value="#{storeBean.jetpackList}" 
@@ -199,7 +203,7 @@
 				</p:dataTable>
 			    </b:tab>
 			    <b:tab title="Shark Repellent">
-				<p:dataTable  paginator="true" rows="5" 
+				<p:dataTable  paginator="true" rows="3" 
 					      paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} 
 					      {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}" 
 					      value="#{storeBean.sharkList}" 
